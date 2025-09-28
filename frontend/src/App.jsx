@@ -1,10 +1,22 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "../pages/Home";
+import Register from "../pages/Register";
+import Login from "../pages/Login";
+import CustomAlert from "../components/CustomAlert";
+
+export const serverURL = "http://localhost:8000/api";
 
 const App = () => {
   return (
-    <div>
-      <h1>Youtube Clone</h1>
-    </div>
+    <>
+      <CustomAlert />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
   );
 };
 

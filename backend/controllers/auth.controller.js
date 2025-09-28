@@ -44,7 +44,8 @@ export const register = async (req, res) => {
     // upload photo on cloudinary if file is present
     let photoUrl;
     if (req.file) {
-      photoUrl = await uploadOnCloudinary(req.file.path);
+      const result = await uploadOnCloudinary(req.file.path);
+      photoUrl = result.secure_url;
     }
 
     // hash the password
@@ -73,6 +74,7 @@ export const register = async (req, res) => {
 
 export const logIn = async (req, res) => {
   try {
+    console.log("request boody", req.body);
     const { email, password } = req.body;
 
     // check if all fields are present
