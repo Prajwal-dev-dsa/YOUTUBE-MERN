@@ -29,7 +29,7 @@ export default function CustomAlert() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -50 }}
         transition={{ duration: 0.3 }}
-        className="fixed right-6 top-6 z-50 w-[350px] rounded-2xl shadow-lg overflow-hidden border border-neutral-800 text-white"
+        className="fixed right-6 top-6 z-150 w-[350px] rounded-2xl shadow-lg overflow-hidden border border-neutral-800 text-white"
       >
         {/* Header with close button */}
         <div className="flex items-center justify-between px-4 py-3 bg-[#202020] border-b border-neutral-800">

@@ -7,9 +7,12 @@ import { showCustomAlert } from "../components/CustomAlert";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { serverURL } from "../App";
+import { useUserStore } from "../store/useUserStore";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const { setLoggedInUserData } = useUserStore();
 
   const [step, setStep] = useState(1); // to count which step you are currently in
 
@@ -41,7 +44,7 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `${serverURL}/auth/login`,
+        `${serverURL}/api/auth/login`,
         {
           email,
           password,
@@ -52,6 +55,7 @@ const Login = () => {
       );
       console.log(res);
       navigate("/");
+      setLoggedInUserData(res?.data?.user);
       showCustomAlert("Login successfull");
     } catch (error) {
       console.log(error);

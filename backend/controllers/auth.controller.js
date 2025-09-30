@@ -74,7 +74,6 @@ export const register = async (req, res) => {
 
 export const logIn = async (req, res) => {
   try {
-    console.log("request boody", req.body);
     const { email, password } = req.body;
 
     // check if all fields are present

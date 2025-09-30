@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CustomAlert from "./components/CustomAlert";
 import Shorts from "./pages/Shorts";
+import { useUserStore } from "./store/useUserStore";
 
-export const serverURL = "http://localhost:8000/api";
+export const serverURL = "http://localhost:8000";
 
 const App = () => {
+  const { getCurrentLoggedInUser } = useUserStore();
+  useEffect(() => {
+    getCurrentLoggedInUser();
+  }, [getCurrentLoggedInUser]);
   return (
     <>
       <CustomAlert />

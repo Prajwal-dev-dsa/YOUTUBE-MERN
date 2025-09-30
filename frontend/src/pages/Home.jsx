@@ -15,14 +15,21 @@ import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { RiPlayList2Fill } from "react-icons/ri";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useUserStore } from "../store/useUserStore";
+import Profile from "../components/Profile";
 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { loggedInUserData } = useUserStore();
+
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Home"); // for desktop
   const [activeItem, setActiveItem] = useState("Home"); // for mobile
+
+  // Toggling profile state
+  const [toggle, setToggle] = useState(false);
 
   // categories to be displayed on the home screen
   const categories = [
@@ -87,11 +94,24 @@ const Home = () => {
 
           {/* right section */}
           <div className="flex items-center gap-3">
-            <button className="bg-[#272727] rounded-full cursor-pointer hidden px-4 py-1 md:flex gap-1 hover:bg-zinc-700 transition duration-300 ease-in-out items-center">
-              <span className="text-xl">+</span>
-              <span className="text-sm">Create</span>
-            </button>
-            <FaUserCircle className="text-3xl hidden md:flex  cursor-pointer text-gray-500" />
+            {loggedInUserData?.channel && (
+              <button className="bg-[#272727] rounded-full cursor-pointer hidden px-4 py-1 md:flex gap-1 hover:bg-zinc-700 transition duration-300 ease-in-out items-center">
+                <span className="text-xl">+</span>
+                <span className="text-sm">Create</span>
+              </button>
+            )}
+            {loggedInUserData ? (
+              <img
+                src={loggedInUserData?.photoUrl}
+                onClick={() => setToggle(!toggle)}
+                className="w-7 h-7 object-cover rounded-full hidden md:flex cursor-pointer"
+              />
+            ) : (
+              <FaUserCircle
+                onClick={() => setToggle(!toggle)}
+                className="text-3xl hidden md:flex  cursor-pointer text-gray-500"
+              />
+            )}
             <FaSearch className="text-lg md:hidden flex" />
           </div>
         </div>
@@ -197,17 +217,29 @@ const Home = () => {
           onClick={() => setActiveItem("Subscriptions")}
         />
         <MobileBarItem
-          icon={<FaUserCircle />}
+          icon={
+            loggedInUserData?.photoUrl ? (
+              <img
+                src={loggedInUserData?.photoUrl}
+                className="w-6 h-6 object-cover rounded-full"
+              />
+            ) : (
+              <FaUserCircle />
+            )
+          }
           text="You"
           active={activeItem === "You"}
           onClick={() => setActiveItem("You")}
         />
       </aside>
 
+      {/* Profile of loggedInUser */}
+      {toggle && <Profile />}
+
       {/* Main Content */}
       <main
         className={`overflow-y-auto p-4 flex flex-col pb-16 transition-all duration-300 ${
-          sideBarOpen ? "ml-64" : "ml-20"
+          sideBarOpen ? "md:ml-64" : "md:ml-20"
         }`}
       >
         {location.pathname === "/" && (
@@ -215,7 +247,7 @@ const Home = () => {
             {categories.map((category, idx) => (
               <button
                 key={idx}
-                className="bg-[#272727] px-4 py-2 rounded-md cursor-pointer hover:bg-zinc-700 transition duration-300 ease-in-out text-sm whitespace-nowrap"
+                className="bg-[#272727] px-4 py-1.5 rounded-md cursor-pointer hover:bg-zinc-700 transition duration-300 ease-in-out text-sm whitespace-nowrap"
               >
                 {category}
               </button>

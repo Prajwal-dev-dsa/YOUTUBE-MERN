@@ -7,6 +7,7 @@ import { serverURL } from "../App";
 import { ClipLoader } from "react-spinners";
 import { showCustomAlert } from "../components/CustomAlert";
 import logo from "../assets/yt_icon.png";
+import { useUserStore } from "../store/useUserStore";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -27,6 +28,9 @@ const Register = () => {
   // image showing in frontend and backend
   const [frontendImage, setFrontendImage] = useState(null); // shown in frontend
   const [backendImage, setBackendImage] = useState(null); // send to backend
+
+  // set current user when loggedIn
+  const { setLoggedInUserData } = useUserStore();
 
   // handling next button
   const handleNext = () => {
@@ -67,10 +71,11 @@ const Register = () => {
     formData.append("password", password);
     formData.append("photoUrl", backendImage);
     try {
-      const res = await axios.post(`${serverURL}/auth/register`, formData, {
+      const res = await axios.post(`${serverURL}/api/auth/register`, formData, {
         withCredentials: true,
       });
       console.log(res);
+      setLoggedInUserData(res?.data?.user);
       navigate("/");
       showCustomAlert("Account created successfully");
     } catch (error) {
