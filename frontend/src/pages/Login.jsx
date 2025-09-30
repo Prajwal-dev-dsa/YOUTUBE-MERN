@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import logo from "../src/assets/yt_icon.png";
+import logo from "../assets/yt_icon.png";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { showCustomAlert } from "../components/CustomAlert";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
-import { serverURL } from "../src/App";
+import { serverURL } from "../App";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ const Login = () => {
       showCustomAlert("Login successfull");
     } catch (error) {
       console.log(error);
-      showCustomAlert(error);
+      showCustomAlert(error.response.data.message);
     } finally {
       setLoading(false);
     }

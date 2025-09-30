@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import logo from "../src/assets/yt_icon.png";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { serverURL } from "../src/App";
+import { serverURL } from "../App";
 import { ClipLoader } from "react-spinners";
 import { showCustomAlert } from "../components/CustomAlert";
+import logo from "../assets/yt_icon.png";
 
 const Register = () => {
   const navigate = useNavigate();

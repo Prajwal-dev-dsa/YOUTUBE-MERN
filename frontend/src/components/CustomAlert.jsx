@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-let alertHandle;
+let alertHandle; // initially undefined, once its mounted using app.jsx it will have that function. Now whenever somebody calls below function alertHandle will assign values to message and showAlert.
 
 export const showCustomAlert = (message) => {
   if (alertHandle) {
-    alertHandle(message);
+    alertHandle(message); // alertHandle is a function that will assign values to message and showAlert.
   }
 };
 
@@ -15,6 +15,7 @@ export default function CustomAlert() {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
+    // alertHandle is no more undefined. Now it contains truthy value
     alertHandle = (message) => {
       setMessage(message);
       setShowAlert(true);
