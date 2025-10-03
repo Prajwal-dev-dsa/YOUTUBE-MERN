@@ -7,15 +7,42 @@ import { TiUserAddOutline } from "react-icons/ti";
 import { SiYoutubestudio } from "react-icons/si";
 import { useNavigate } from "react-router-dom";
 import { showCustomAlert } from "../components/CustomAlert";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/firebase";
+import axios from "axios";
+import { serverURL } from "../App";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { loggedInUserData, logout } = useUserStore(); // getting current loggedIn user's data
+  const { loggedInUserData, logout, setLoggedInUserData } = useUserStore(); // getting current loggedIn user's data
 
   const logoutHandler = async () => {
     await logout();
     navigate("/");
     showCustomAlert("Logout successfull");
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const res = await signInWithPopup(auth, provider);
+      console.log(res);
+
+      const user = {
+        userName: res.user.displayName,
+        email: res.user.email,
+        photoUrl: res.user.photoURL,
+      };
+      const result = await axios.post(`${serverURL}/api/auth/google`, user, {
+        withCredentials: true,
+      });
+      console.log(result);
+      setLoggedInUserData(result.data);
+      showCustomAlert("Login successfully");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      showCustomAlert("Login failed");
+    }
   };
 
   return (
@@ -38,8 +65,11 @@ const Profile = () => {
           </div>
         )}
         <div className="flex flex-col py-2">
-          <button className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300">
-            <FcGoogle className="text-2xl" /> Register With Google
+          <button
+            onClick={handleGoogleSignIn}
+            className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
+          >
+            <FcGoogle className="text-2xl" /> Google Sign In
           </button>
           <button
             onClick={() => navigate("/register")}
