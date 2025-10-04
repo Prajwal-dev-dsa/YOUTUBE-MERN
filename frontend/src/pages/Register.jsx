@@ -91,7 +91,7 @@ const Register = () => {
       <div className="bg-[#202124] p-10 rounded-2xl w-full max-w-md shadow-lg">
         <div className="flex items-center gap-3 mb-6">
           <button
-            onClick={() => (step > 1 ? setStep(step - 1) : navigate("/"))}
+            onClick={() => (step > 1 ? setStep(step - 1) : navigate(-1))}
             className="cursor-pointer"
           >
             <FaArrowLeft />

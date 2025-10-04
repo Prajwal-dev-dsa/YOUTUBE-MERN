@@ -6,9 +6,7 @@ import { AiFillAudio } from "react-icons/ai";
 import { FaSearch, FaUserCircle } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
-import { FaList } from "react-icons/fa";
 import { FaThumbsUp } from "react-icons/fa6";
-import { FaTimes } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 import { SiYoutubeshorts } from "react-icons/si";
@@ -197,7 +195,10 @@ const Home = () => {
           icon={<FaHome />}
           text="Home"
           active={activeItem === "Home"}
-          onClick={() => setActiveItem("Home")}
+          onClick={() => {
+            setActiveItem("Home");
+            navigate("/");
+          }}
         />
         <MobileBarItem
           icon={<SiYoutubeshorts />}
@@ -229,7 +230,10 @@ const Home = () => {
           }
           text="You"
           active={activeItem === "You"}
-          onClick={() => setActiveItem("You")}
+          onClick={() => {
+            setActiveItem("You");
+            navigate("/mobileProfileView");
+          }}
         />
       </aside>
 
