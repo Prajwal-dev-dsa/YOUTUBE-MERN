@@ -7,6 +7,7 @@ import CustomAlert from "./components/CustomAlert";
 import Shorts from "./pages/Shorts";
 import { useUserStore } from "./store/useUserStore";
 import ProfileForMobileView from "./components/ProfileForMobileView";
+import ForgotPassword from "./pages/ForgotPassword";
 
 export const serverURL = "http://localhost:8000";
 
@@ -25,6 +26,7 @@ const App = () => {
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </>
   );

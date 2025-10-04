@@ -145,7 +145,10 @@ const Login = () => {
             >
               {loading ? <ClipLoader color="black" size={20} /> : "Login"}
             </button>
-            <button className="w-full border-red-500 border-1 hover:bg-zinc-800 text-white p-2 font-sm rounded-full mt-3 transition duration-300 ease-in-out cursor-pointer">
+            <button
+              onClick={() => navigate("/forgot-password")}
+              className="w-full border-red-500 border-1 hover:bg-zinc-800 text-white p-2 font-sm rounded-full mt-3 transition duration-300 ease-in-out cursor-pointer"
+            >
               Forgot Password?
             </button>
           </div>
