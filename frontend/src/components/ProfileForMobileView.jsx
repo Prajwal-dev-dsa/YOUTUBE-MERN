@@ -67,7 +67,14 @@ const ProfileForMobileView = () => {
             <span className="text-sm text-gray-400">
               {loggedInUserData?.email}
             </span>
-            <p className="text-sm cursor-pointer hover:underline text-blue-400">
+            <p
+              className="text-sm cursor-pointer hover:underline text-blue-400"
+              onClick={() => {
+                loggedInUserData?.channel
+                  ? navigate("/view-channel")
+                  : navigate("/create-channel");
+              }}
+            >
               {loggedInUserData?.channel ? "View Channel" : "Create Channel"}
             </p>
           </div>

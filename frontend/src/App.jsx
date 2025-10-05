@@ -8,14 +8,19 @@ import Shorts from "./pages/Shorts";
 import { useUserStore } from "./store/useUserStore";
 import ProfileForMobileView from "./components/ProfileForMobileView";
 import ForgotPassword from "./pages/ForgotPassword";
+import CreateChannel from "./pages/channel/CreateChannel";
+import ViewChannel from "./pages/channel/ViewChannel";
+import { useChannelStore } from "./store/useChannelStore";
 
 export const serverURL = "http://localhost:8000";
 
 const App = () => {
   const { getCurrentLoggedInUser } = useUserStore();
+  const { getUserChannel } = useChannelStore();
   useEffect(() => {
     getCurrentLoggedInUser();
-  }, [getCurrentLoggedInUser]);
+    getUserChannel();
+  }, [getCurrentLoggedInUser, getUserChannel]);
   return (
     <>
       <CustomAlert />
@@ -27,6 +32,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/create-channel" element={<CreateChannel />} />
       </Routes>
     </>
   );

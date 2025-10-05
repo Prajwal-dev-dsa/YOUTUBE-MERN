@@ -58,7 +58,14 @@ const Profile = () => {
             <div>
               <h4 className="font-medium">{loggedInUserData?.userName}</h4>
               <p className="text-xs text-gray-400">{loggedInUserData?.email}</p>
-              <p className="text-xs text-blue-400 cursor-pointer hover:underline">
+              <p
+                className="text-xs text-blue-400 cursor-pointer hover:underline"
+                onClick={() => {
+                  loggedInUserData?.channel
+                    ? navigate("/view-channel")
+                    : navigate("/create-channel");
+                }}
+              >
                 {loggedInUserData?.channel ? "View Channel" : "Create Channel"}
               </p>
             </div>
