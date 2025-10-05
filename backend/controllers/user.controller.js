@@ -55,6 +55,55 @@ export const createChannel = async (req, res) => {
   }
 };
 
+export const customizeChannel = async (req, res) => {
+  try {
+    const { name, userName, description, category } = req.body;
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isChannelExists = await Channel.findOne({ owner: userId });
+    if (!isChannelExists) {
+      return res.status(400).json({ message: "Channel not found" });
+    }
+    let banner;
+    let avatar;
+    if (req.files?.avatar) {
+      const result = await uploadOnCloudinary(req.files.avatar[0].path);
+      avatar = result.secure_url;
+    }
+    if (req.files?.banner) {
+      const result = await uploadOnCloudinary(req.files.banner[0].path);
+      banner = result.secure_url;
+    }
+
+    const channel = await Channel.findOneAndUpdate(
+      { owner: userId },
+      {
+        name: name || isChannelExists.name,
+        avatar: avatar || isChannelExists.avatar,
+        banner: banner || isChannelExists.banner,
+        userName: userName || isChannelExists.userName,
+        description: description || isChannelExists.description,
+        category: category || isChannelExists.category,
+        owner: userId,
+      },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(userId, {
+      userName: name || isChannelExists.userName,
+      photoUrl: avatar || isChannelExists.avatar,
+    });
+
+    return res.status(200).json(channel);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const getUserChannel = async (req, res) => {
   try {
     const userId = req.user._id;

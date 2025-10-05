@@ -1,23 +1,34 @@
-import React, { useState } from "react";
-import logo from "../../assets/yt_icon.png";
-import { useUserStore } from "../../store/useUserStore";
+import React, { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverURL } from "../../App";
 import { showCustomAlert } from "../../components/CustomAlert";
+import { useChannelStore } from "../../store/useChannelStore";
 import { ClipLoader } from "react-spinners";
+import { useUserStore } from "../../store/useUserStore";
 
-const CreateChannel = () => {
+const CustomizeChannel = () => {
   const navigate = useNavigate();
-  const { loggedInUserData } = useUserStore();
+  const { channelData, setChannelData } = useChannelStore();
   const [step, setStep] = useState(1); // to count which step you are currently in
-  const [avatar, setAvatar] = useState(null);
-  const [channelName, setChannelName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [banner, setBanner] = useState(null);
+  const [avatar, setAvatar] = useState(channelData?.avatar);
+  const [channelName, setChannelName] = useState(channelData?.name);
+  const [description, setDescription] = useState(channelData?.description);
+  const [category, setCategory] = useState(channelData?.category);
+  const [banner, setBanner] = useState(channelData?.banner);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // When channelData is loaded or changes, update the component's state
+    if (channelData) {
+      setChannelName(channelData.name);
+      setAvatar(channelData.avatar);
+      setBanner(channelData.banner);
+      setDescription(channelData.description);
+      setCategory(channelData.category);
+    }
+  }, [channelData]);
 
   const handleAvatar = (e) => {
     const file = e.target.files[0];
@@ -45,6 +56,20 @@ const CreateChannel = () => {
     }
   };
 
+  const avatarSrc =
+    typeof avatar === "string"
+      ? avatar // If it's a string, use it directly as the URL
+      : avatar instanceof File
+      ? URL.createObjectURL(avatar) // If it's a File object, create an object URL
+      : null; // Otherwise, there's no source
+
+  const bannerSrc =
+    typeof banner === "string"
+      ? banner // If it's a string, use it directly as the URL
+      : banner instanceof File
+      ? URL.createObjectURL(banner) // If it's a File object, create an object URL
+      : null; // Otherwise, there's no source
+
   function generateUniqueUsername(fullName) {
     const baseUsername = fullName.toLowerCase().replace(/\s+/g, "");
     const uniqueSuffix = Math.random().toString(36).substring(2, 8);
@@ -64,13 +89,14 @@ const CreateChannel = () => {
       formData.append("category", category);
 
       const response = await axios.post(
-        `${serverURL}/api/user/create-channel`,
+        `${serverURL}/api/user/customize-channel`,
         formData,
         { withCredentials: true }
       );
       console.log(response.data);
-      navigate("/");
-      showCustomAlert("Channel created successfully");
+      setChannelData(response.data);
+      navigate("/view-channel");
+      showCustomAlert("Channel updated successfully");
     } catch (error) {
       console.log(error);
       showCustomAlert(error?.response?.data?.message, "error");
@@ -80,28 +106,15 @@ const CreateChannel = () => {
   };
   return (
     <div className="bg-[#0f0f0f] w-full min-h-screen flex flex-col text-white">
-      <header className="flex items-center justify-between px-6 py-3 border-b border-gray-800">
-        <div className="flex items-center gap-2">
-          <img src={logo} alt="" className="w-10" />
-          <span className="font-roboto text-2xl tracking-tighter ">
-            YouTube
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <img
-            src={loggedInUserData?.photoUrl}
-            alt=""
-            className="size-10 rounded-full object-cover"
-          />
-        </div>
-      </header>
       <main className="flex flex-1 justify-center items-center px-4">
         <div className="bg-[#212121] p-6 rounded-xl w-full max-w-lg shadow-lg">
           {step === 1 && (
             <div>
-              <h2 className="text-2xl font-medium mb-4">How you'll appear</h2>
+              <h2 className="text-2xl font-medium mb-4">
+                How you're appearing
+              </h2>
               <p className="text-sm text-gray-400 mb-4">
-                Choose profile picture & Channel name
+                Update profile picture & Channel name
               </p>
               <div className="flex flex-col items-center my-8">
                 <label
@@ -110,7 +123,7 @@ const CreateChannel = () => {
                 >
                   {avatar ? (
                     <img
-                      src={URL.createObjectURL(avatar)}
+                      src={avatarSrc}
                       alt=""
                       className="size-20 rounded-full object-cover border-2 border-gray-600"
                     />
@@ -120,7 +133,7 @@ const CreateChannel = () => {
                     </div>
                   )}
                   <span className="text-red-500 text-sm mt-2">
-                    Upload Picture
+                    Update Picture
                   </span>
                   <input
                     type="file"
@@ -164,7 +177,7 @@ const CreateChannel = () => {
                 <label className="flex items-center flex-col cursor-pointer">
                   {avatar ? (
                     <img
-                      src={URL.createObjectURL(avatar)}
+                      src={avatarSrc}
                       alt=""
                       className="size-20 rounded-full object-cover border-2 border-gray-600"
                     />
@@ -194,12 +207,14 @@ const CreateChannel = () => {
           )}
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-medium mb-8">Create Your Channel</h2>
+              <h2 className="text-2xl font-medium mb-8">
+                Customize Your Channel
+              </h2>
               <div className="flex flex-col items-center my-8">
                 <label htmlFor="banner" className="block w-full cursor-pointer">
                   {banner ? (
                     <img
-                      src={URL.createObjectURL(banner)}
+                      src={bannerSrc}
                       alt=""
                       className="w-full h-32 object-cover rounded-lg border-2 border-gray-600"
                     />
@@ -242,7 +257,7 @@ const CreateChannel = () => {
                 {loading ? (
                   <ClipLoader color="black" size={20} />
                 ) : (
-                  "Create Channel"
+                  "Update Channel"
                 )}
               </button>
               <button
@@ -259,4 +274,4 @@ const CreateChannel = () => {
   );
 };
 
-export default CreateChannel;
+export default CustomizeChannel;

@@ -11,6 +11,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import CreateChannel from "./pages/channel/CreateChannel";
 import ViewChannel from "./pages/channel/ViewChannel";
 import { useChannelStore } from "./store/useChannelStore";
+import CustomizeChannel from "./pages/channel/CustomizeChannel";
 
 export const serverURL = "http://localhost:8000";
 
@@ -28,6 +29,8 @@ const App = () => {
         <Route path="/" element={<Home />}>
           <Route path="/shorts" element={<Shorts />} />
           <Route path="/mobileProfileView" element={<ProfileForMobileView />} />
+          <Route path="/view-channel" element={<ViewChannel />} />
+          <Route path="/customize-channel" element={<CustomizeChannel />} />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

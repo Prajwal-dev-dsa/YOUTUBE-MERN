@@ -4,7 +4,10 @@ import {
   getCurrentLoggedInUser,
   getUserChannel,
 } from "../controllers/user.controller.js";
-import { createChannel } from "../controllers/user.controller.js";
+import {
+  createChannel,
+  customizeChannel,
+} from "../controllers/user.controller.js";
 import uploads from "../middlewares/multer.js";
 const userRouter = express.Router();
 
@@ -18,6 +21,15 @@ userRouter.post(
     { name: "banner", maxCount: 1 },
   ]),
   createChannel
+);
+userRouter.post(
+  "/customize-channel",
+  protectedRoute,
+  uploads.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "banner", maxCount: 1 },
+  ]),
+  customizeChannel
 );
 
 export default userRouter;
