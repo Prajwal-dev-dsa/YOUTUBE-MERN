@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUserStore } from "../store/useUserStore";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineSubscriptions, MdOutlineSwitchAccount } from "react-icons/md";
@@ -17,12 +17,12 @@ import { serverURL } from "../App";
 
 const ProfileForMobileView = () => {
   const navigate = useNavigate();
-  const { loggedInUserData, logout, setLoggedInUserData } = useUserStore(); // getting current loggedIn user's data
+  const { loggedInUserData, logout, setLoggedInUserData, getCurrentLoggedInUser } = useUserStore(); // getting current loggedIn user's data
 
   const logoutHandler = async () => {
     await logout();
     navigate("/");
-    showCustomAlert("Logout successfull");
+    showCustomAlert("Logout successfully");
   };
 
   const handleGoogleSignIn = async () => {
@@ -47,6 +47,10 @@ const ProfileForMobileView = () => {
       showCustomAlert("Login failed");
     }
   };
+
+  useEffect(() => {
+    getCurrentLoggedInUser();
+  }, [getCurrentLoggedInUser]);
 
   return (
     <div className="md:hidden bg-[#0f0f0f] text-white h-[100%] w-[100%] flex flex-col pt-[75px] p-[10px]">

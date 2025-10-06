@@ -12,11 +12,20 @@ import CreateChannel from "./pages/channel/CreateChannel";
 import ViewChannel from "./pages/channel/ViewChannel";
 import { useChannelStore } from "./store/useChannelStore";
 import CustomizeChannel from "./pages/channel/CustomizeChannel";
+import { Navigate } from "react-router-dom";
+import CreateContent from "./pages/channel/CreateContent";
 
 export const serverURL = "http://localhost:8000";
 
+const ProtectedRoute = ({ loggedInUserData, children }) => {
+  if (!loggedInUserData) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
 const App = () => {
-  const { getCurrentLoggedInUser } = useUserStore();
+  const { getCurrentLoggedInUser, loggedInUserData } = useUserStore();
   const { getUserChannel } = useChannelStore();
   useEffect(() => {
     getCurrentLoggedInUser();
@@ -27,15 +36,56 @@ const App = () => {
       <CustomAlert />
       <Routes>
         <Route path="/" element={<Home />}>
-          <Route path="/shorts" element={<Shorts />} />
+          <Route
+            path="/shorts"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Shorts />}
+              />
+            }
+          />
           <Route path="/mobileProfileView" element={<ProfileForMobileView />} />
-          <Route path="/view-channel" element={<ViewChannel />} />
-          <Route path="/customize-channel" element={<CustomizeChannel />} />
+          <Route
+            path="/view-channel"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<ViewChannel />}
+              />
+            }
+          />
+          <Route
+            path="/customize-channel"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CustomizeChannel />}
+              />
+            }
+          />
+          <Route
+            path="/create-content"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CreateContent />}
+              />
+            }
+          />
         </Route>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/create-channel" element={<CreateChannel />} />
+        <Route
+          path="/create-channel"
+          element={
+            <ProtectedRoute
+              loggedInUserData={loggedInUserData}
+              children={<CreateChannel />}
+            />
+          }
+        />
       </Routes>
     </>
   );

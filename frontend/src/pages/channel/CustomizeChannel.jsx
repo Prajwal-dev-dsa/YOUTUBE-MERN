@@ -10,6 +10,7 @@ import { useUserStore } from "../../store/useUserStore";
 
 const CustomizeChannel = () => {
   const navigate = useNavigate();
+  const { setLoggedInUserData } = useUserStore();
   const { channelData, setChannelData } = useChannelStore();
   const [step, setStep] = useState(1); // to count which step you are currently in
   const [avatar, setAvatar] = useState(channelData?.avatar);
@@ -95,6 +96,7 @@ const CustomizeChannel = () => {
       );
       console.log(response.data);
       setChannelData(response.data);
+      setLoggedInUserData(response.data?.owner);
       navigate("/view-channel");
       showCustomAlert("Channel updated successfully");
     } catch (error) {

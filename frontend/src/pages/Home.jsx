@@ -93,7 +93,10 @@ const Home = () => {
           {/* right section */}
           <div className="flex items-center gap-3">
             {loggedInUserData?.channel && (
-              <button className="bg-[#272727] rounded-full cursor-pointer hidden px-4 py-1 md:flex gap-1 hover:bg-zinc-700 transition duration-300 ease-in-out items-center">
+              <button
+                onClick={() => navigate("/create-content")}
+                className="bg-[#272727] rounded-full cursor-pointer hidden px-4 py-1 md:flex gap-1 hover:bg-zinc-700 transition duration-300 ease-in-out items-center"
+              >
                 <span className="text-xl">+</span>
                 <span className="text-sm">Create</span>
               </button>
@@ -209,7 +212,10 @@ const Home = () => {
         <MobileBarItem
           icon={<IoIosAddCircle size={40} />}
           active={activeItem === "+"}
-          onClick={() => setActiveItem("+")}
+          onClick={() => {
+            setActiveItem("+");
+            navigate("/create-content");
+          }}
         />
         <MobileBarItem
           icon={<MdOutlineSubscriptions />}
@@ -238,7 +244,7 @@ const Home = () => {
       </aside>
 
       {/* Profile of loggedInUser */}
-      {toggle && <Profile />}
+      {toggle && <Profile setToggle={setToggle} />}
 
       {/* Main Content */}
       <main

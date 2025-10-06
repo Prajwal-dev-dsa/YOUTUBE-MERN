@@ -58,7 +58,10 @@ const ViewChannel = () => {
             Upload & Record at Home or on the go. Everything you make will
             appear here!!
           </p>
-          <button className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded-full hover:bg-red-700 transition-colors mt-5">
+          <button
+            onClick={() => navigate("/create-content")}
+            className="px-4 py-2 bg-red-600 cursor-pointer text-white rounded-full hover:bg-red-700 transition-colors mt-5"
+          >
             + Create
           </button>
         </div>

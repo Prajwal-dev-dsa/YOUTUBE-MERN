@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUserStore } from "../store/useUserStore";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineSwitchAccount } from "react-icons/md";
@@ -12,14 +12,15 @@ import { auth, provider } from "../../utils/firebase";
 import axios from "axios";
 import { serverURL } from "../App";
 
-const Profile = () => {
+const Profile = ({ setToggle }) => {
   const navigate = useNavigate();
-  const { loggedInUserData, logout, setLoggedInUserData } = useUserStore(); // getting current loggedIn user's data
+  const { loggedInUserData, logout, setLoggedInUserData, getCurrentLoggedInUser } = useUserStore(); // getting current loggedIn user's data
 
   const logoutHandler = async () => {
     await logout();
     navigate("/");
-    showCustomAlert("Logout successfull");
+    showCustomAlert("Logout successfully");
+    setToggle(false);
   };
 
   const handleGoogleSignIn = async () => {
@@ -43,7 +44,14 @@ const Profile = () => {
       console.log(error);
       showCustomAlert("Login failed");
     }
+    finally{
+      setToggle(false);
+    }
   };
+
+  useEffect(() => {
+    getCurrentLoggedInUser();
+  }, [getCurrentLoggedInUser]);
 
   return (
     <div>
@@ -79,13 +87,13 @@ const Profile = () => {
             <FcGoogle className="text-2xl" /> Google Sign In
           </button>
           <button
-            onClick={() => navigate("/register")}
+            onClick={() => {navigate("/register"); setToggle(false);}}
             className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
           >
             <TiUserAddOutline className="text-2xl" /> Create New Account
           </button>
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => {navigate("/login"); setToggle(false);}}
             className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
           >
             <MdOutlineSwitchAccount className="text-2xl" /> Switch Account
