@@ -51,7 +51,7 @@ const CreateVideo = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#0f0f0f] text-white flex flex-col">
+    <div className="w-full min-h-[50vh] bg-[#0f0f0f] text-white flex flex-col">
       <div className="flex flex-1 justify-center items-center px-4 py-6">
         <div className="bg-[#212121] p-6 rounded-xl shadow-lg space-y-6 w-full max-w-xl">
           {/* Upload Video */}
