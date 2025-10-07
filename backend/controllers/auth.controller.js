@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import validator from "validator";
+import { v2 as cloudinary } from "cloudinary";
 import uploadOnCloudinary from "../config/cloudinary.js";
 import { generateToken } from "../config/generateToken.js";
 import bcrypt from "bcryptjs";
@@ -127,7 +128,7 @@ export const googleSignIn = async (req, res) => {
       try {
         const result = await cloudinary.uploader.upload(photoUrl, {
           folder: "youtube_clone_avatars", // Organizes images in Cloudinary
-          resource_type: "image",
+          resource_type: "auto",
         });
         finalPhotoUrl = result.secure_url; // Use the new Cloudinary URL
       } catch (uploadError) {

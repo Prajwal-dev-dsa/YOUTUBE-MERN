@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { FaPen, FaPlay, FaVideo } from "react-icons/fa";
 import { FaList } from "react-icons/fa6";
 import createVideosIcon from "../../assets/createVideosIcon.png";
+import { useNavigate } from "react-router-dom";
 
 const CreateContent = () => {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState("");
   const options = [
     { id: "Video", icon: <FaVideo size={24} />, title: "Upload Video" },
@@ -15,6 +17,22 @@ const CreateContent = () => {
     },
     { id: "Playlist", icon: <FaList size={24} />, title: "Create Playlist" },
   ];
+
+  const handleContentUpload = () => {
+    if (selected === "Video") {
+      navigate("/create-video");
+    }
+    if (selected === "Short") {
+      navigate("/create-short");
+    }
+    if (selected === "CommunityPost") {
+      navigate("/create-post");
+    }
+    if (selected === "Playlist") {
+      navigate("/create-playlist");
+    }
+  };
+
   return (
     <div className="bg-[#0f0f0f] min-h-screen text-white px-6 flex flex-col">
       <header className="mb-12 border-b border-[#3f3f3f] pb-4">
@@ -62,7 +80,10 @@ const CreateContent = () => {
             <p className="text-gray-400 text-center text-sm">
               You can create {selected} here
             </p>
-            <button className="bg-[#ff0000] text-white px-4 py-2 rounded-full cursor-pointer font-medium mt-6 hover:bg-[#ff0000]/90 transition duration-300">
+            <button
+              onClick={handleContentUpload}
+              className="bg-[#ff0000] text-white px-4 py-2 rounded-full cursor-pointer font-medium mt-6 hover:bg-[#ff0000]/90 transition duration-300"
+            >
               + Create
             </button>
           </div>

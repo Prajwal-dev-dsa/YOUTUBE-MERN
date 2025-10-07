@@ -8,12 +8,16 @@ import Shorts from "./pages/Shorts";
 import { useUserStore } from "./store/useUserStore";
 import ProfileForMobileView from "./components/ProfileForMobileView";
 import ForgotPassword from "./pages/ForgotPassword";
-import CreateChannel from "./pages/channel/CreateChannel";
-import ViewChannel from "./pages/channel/ViewChannel";
+import CreateChannel from "./pages/Channel/CreateChannel";
+import ViewChannel from "./pages/Channel/ViewChannel";
 import { useChannelStore } from "./store/useChannelStore";
-import CustomizeChannel from "./pages/channel/CustomizeChannel";
+import CustomizeChannel from "./pages/Channel/CustomizeChannel";
 import { Navigate } from "react-router-dom";
-import CreateContent from "./pages/channel/CreateContent";
+import CreateContent from "./pages/Channel/CreateContent";
+import CreateVideo from "./pages/Videos/CreateVideo";
+import CreateShort from "./pages/Shorts/CreateShort";
+import CreatePost from "./pages/Posts/CreatePost";
+import CreatePlaylist from "./pages/Playlists/CreatePlaylist";
 
 export const serverURL = "http://localhost:8000";
 
@@ -70,6 +74,42 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<CreateContent />}
+              />
+            }
+          />
+          <Route
+            path="/create-video"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CreateVideo />}
+              />
+            }
+          />
+          <Route
+            path="/create-short"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CreateShort />}
+              />
+            }
+          />
+          <Route
+            path="/create-post"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CreatePost />}
+              />
+            }
+          />
+          <Route
+            path="/create-playlist"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<CreatePlaylist />}
               />
             }
           />
