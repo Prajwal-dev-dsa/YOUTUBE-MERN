@@ -2,11 +2,17 @@ import React from "react";
 import { useChannelStore } from "../../store/useChannelStore";
 import createVideosIcon from "../../assets/createVideosIcon.png";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const ViewChannel = () => {
-  const { channelData } = useChannelStore();
+  const { channelData, getUserChannel } = useChannelStore();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getUserChannel();
+  }, [getUserChannel]);
+
   return (
     <div className="flex flex-col gap-3">
       {/* Youtube banner */}

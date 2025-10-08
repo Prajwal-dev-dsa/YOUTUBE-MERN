@@ -49,3 +49,19 @@ export const createShort = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getAllShorts = async (req, res) => {
+  try {
+    const getShorts = await shortModel
+      .find()
+      .sort({ createdAt: -1 })
+      .populate("channel");
+    if (!getShorts) {
+      return res.status(404).json({ message: "No shorts found" });
+    }
+    return res.status(200).json(getShorts);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

@@ -54,3 +54,19 @@ export const createVideo = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getAllVideos = async (req, res) => {
+  try {
+    const getVideos = await videoModel
+      .find()
+      .sort({ createdAt: -1 })
+      .populate("channel");
+    if (!getVideos) {
+      return res.status(404).json({ message: "No videos found" });
+    }
+    return res.status(200).json(getVideos);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

@@ -5,10 +5,12 @@ import { serverURL } from "../../App";
 import { ClipLoader } from "react-spinners";
 import { showCustomAlert } from "../../components/CustomAlert";
 import { useNavigate } from "react-router-dom";
+import { useContentStore } from "../../store/useContentStore";
 
 const CreateVideo = () => {
   const navigate = useNavigate();
-  const { channelData } = useChannelStore();
+  const { channelData, setChannelData } = useChannelStore();
+  const { videos, setVideos } = useContentStore();
   const [videoUrl, setVideoUrl] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
   const [title, setTitle] = useState("");
@@ -40,6 +42,12 @@ const CreateVideo = () => {
         { withCredentials: true }
       );
       console.log(response.data);
+      setVideos([...videos, response.data]);
+      const updateChannelVideosField = {
+        ...channelData,
+        videos: [...(channelData.videos || []), response.data._id],
+      };
+      setChannelData(updateChannelVideosField);
       showCustomAlert("Video uploaded successfully");
       navigate("/");
     } catch (error) {

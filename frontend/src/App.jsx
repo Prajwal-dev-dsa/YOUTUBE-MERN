@@ -18,6 +18,7 @@ import CreateVideo from "./pages/Videos/CreateVideo";
 import CreateShort from "./pages/Shorts/CreateShort";
 import CreatePost from "./pages/Posts/CreatePost";
 import CreatePlaylist from "./pages/Playlists/CreatePlaylist";
+import { useContentStore } from "./store/useContentStore";
 
 export const serverURL = "http://localhost:8000";
 
@@ -31,10 +32,13 @@ const ProtectedRoute = ({ loggedInUserData, children }) => {
 const App = () => {
   const { getCurrentLoggedInUser, loggedInUserData } = useUserStore();
   const { getUserChannel } = useChannelStore();
+  const { getAllVideos, getAllShorts } = useContentStore();
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
-  }, [getCurrentLoggedInUser, getUserChannel]);
+    getAllVideos();
+    getAllShorts();
+  }, [getCurrentLoggedInUser, getUserChannel, getAllVideos, getAllShorts]);
   return (
     <>
       <CustomAlert />

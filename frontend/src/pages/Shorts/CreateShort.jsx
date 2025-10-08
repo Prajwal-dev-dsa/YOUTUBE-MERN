@@ -6,10 +6,12 @@ import { serverURL } from "../../App";
 import { showCustomAlert } from "../../components/CustomAlert";
 import { useChannelStore } from "../../store/useChannelStore";
 import { useNavigate } from "react-router-dom";
+import { useContentStore } from "../../store/useContentStore";
 
 const CreateShort = () => {
   const navigate = useNavigate();
-  const { channelData } = useChannelStore();
+  const { channelData, setChannelData } = useChannelStore();
+  const { shorts, setShorts } = useContentStore();
   const [shortUrl, setShortUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
@@ -39,6 +41,12 @@ const CreateShort = () => {
         { withCredentials: true }
       );
       console.log(response.data);
+      setShorts([...shorts, response.data]);
+      const updateChannelShortsField = {
+        ...channelData,
+        shorts: [...(channelData.shorts || []), response.data._id],
+      };
+      setChannelData(updateChannelShortsField);
       showCustomAlert("Short uploaded successfully");
       navigate("/");
     } catch (error) {

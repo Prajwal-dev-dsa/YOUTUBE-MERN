@@ -1,7 +1,7 @@
 import express from "express";
 import { protectedRoute } from "../middlewares/protectedRoute.js";
-import { createVideo } from "../controllers/video.controller.js";
-import { createShort } from "../controllers/short.controller.js";
+import { createVideo, getAllVideos } from "../controllers/video.controller.js";
+import { createShort, getAllShorts } from "../controllers/short.controller.js";
 import uploads from "../middlewares/multer.js";
 
 const contentRouter = express.Router();
@@ -14,13 +14,17 @@ contentRouter.post(
     { name: "thumbnail", maxCount: 1 },
   ]),
   createVideo
-); // videos
+);
+contentRouter.get("/getAllVideos", protectedRoute, getAllVideos);
+// videos
 
 contentRouter.post(
   "/create-short",
   protectedRoute,
   uploads.single("short"),
   createShort
-); // shorts
+);
+contentRouter.get("/getAllShorts", protectedRoute, getAllShorts);
+// shorts
 
 export default contentRouter;

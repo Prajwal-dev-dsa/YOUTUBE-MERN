@@ -15,6 +15,8 @@ import { RiPlayList2Fill } from "react-icons/ri";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useUserStore } from "../store/useUserStore";
 import Profile from "../components/Profile";
+import DisplayVideosInHomePage from "../components/DisplayVideosInHomePage";
+import DisplayShortsInHomePage from "../components/DisplayShortsInHomePage";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -264,6 +266,10 @@ const Home = () => {
             ))}
           </div>
         )}
+        <div>
+          {location.pathname === "/" && <DisplayVideosInHomePage />}
+          {location.pathname === "/" && <DisplayShortsInHomePage />}
+        </div>
         <div className="mt-17">
           <Outlet />
         </div>
