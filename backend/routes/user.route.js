@@ -3,12 +3,12 @@ import { protectedRoute } from "../middlewares/protectedRoute.js";
 import {
   getCurrentLoggedInUser,
   getUserChannel,
-} from "../controllers/user.controller.js";
-import {
+  toggleSubscribers,
   createChannel,
   customizeChannel,
 } from "../controllers/user.controller.js";
 import uploads from "../middlewares/multer.js";
+
 const userRouter = express.Router();
 
 userRouter.get("/", protectedRoute, getCurrentLoggedInUser);
@@ -31,5 +31,6 @@ userRouter.post(
   ]),
   customizeChannel
 );
+userRouter.post("/toggle-subscribers", protectedRoute, toggleSubscribers);
 
 export default userRouter;
