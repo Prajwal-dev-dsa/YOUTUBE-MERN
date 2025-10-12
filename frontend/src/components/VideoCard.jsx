@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const VideoCard = ({
   thumbnail,
@@ -9,8 +10,12 @@ const VideoCard = ({
   views,
   id,
 }) => {
+  const navigate = useNavigate();
   return (
-    <div className="w-full cursor-pointer">
+    <div
+      className="w-full cursor-pointer"
+      onClick={() => navigate(`/play-video/${id}`)}
+    >
       <div className="relative">
         <img
           src={thumbnail}
