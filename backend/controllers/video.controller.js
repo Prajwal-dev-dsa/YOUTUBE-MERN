@@ -71,7 +71,7 @@ export const getAllVideos = async (req, res) => {
   }
 };
 
-export const toggleLikes = async (req, res) => {
+export const toggleLikesOfVideo = async (req, res) => {
   try {
     const { videoId } = req.params;
     const userId = req.user._id;
@@ -94,7 +94,7 @@ export const toggleLikes = async (req, res) => {
   }
 };
 
-export const toggleDislikes = async (req, res) => {
+export const toggleDislikesOfVideo = async (req, res) => {
   try {
     const { videoId } = req.params;
     const userId = req.user._id;
@@ -117,7 +117,7 @@ export const toggleDislikes = async (req, res) => {
   }
 };
 
-export const toggleSavedBy = async (req, res) => {
+export const toggleSavedByOfVideo = async (req, res) => {
   try {
     const { videoId } = req.params;
     const userId = req.user._id;

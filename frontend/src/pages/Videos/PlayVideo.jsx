@@ -540,7 +540,11 @@ const PlayVideo = () => {
         </h2>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-3">
           {suggestedShorts.map((short) => (
-            <div key={short?._id}>
+            <div
+              key={short?._id}
+              onClick={() => navigate(`/play-short/${short?._id}`)}
+              className="flex gap-3 cursor-pointer hover:bg-[#1a1a1a] p-2 rounded-lg transition"
+            >
               <ShortCard
                 {...short}
                 shortUrl={short?.shortUrl}

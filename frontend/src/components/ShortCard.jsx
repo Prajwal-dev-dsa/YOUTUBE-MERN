@@ -2,7 +2,7 @@ import React from "react";
 
 const ShortCard = ({ shortUrl, title, channelName, avatar, views, id }) => {
   return (
-    <div className="w-45 sm:w-48 flex-shrink-0 cursor-pointer relative ">
+    <div className="w-45 sm:w-48 flex-shrink-0 cursor-pointer relative">
       <div className="rounded-xl overflow-hidden bg-black w-full h-70 border-1 border-gray-700">
         <video
           src={shortUrl}
@@ -25,7 +25,7 @@ const ShortCard = ({ shortUrl, title, channelName, avatar, views, id }) => {
           />
           <span className="text-xs text-gray-400">{channelName}</span>
         </div>
-          <span className="text-xs text-gray-400">{views} views</span>
+        <span className="text-xs text-gray-400">{views} views</span>
       </div>
     </div>
   );

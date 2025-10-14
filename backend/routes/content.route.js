@@ -3,14 +3,23 @@ import { protectedRoute } from "../middlewares/protectedRoute.js";
 import {
   createVideo,
   getAllVideos,
+  toggleLikesOfVideo,
+  toggleDislikesOfVideo,
+  toggleSavedByOfVideo,
   getViewsOfTheVideo,
-  toggleDislikes,
-  toggleLikes,
-  toggleSavedBy,
   addCommentsInTheVideo,
   addReplyInTheComment,
 } from "../controllers/video.controller.js";
-import { createShort, getAllShorts } from "../controllers/short.controller.js";
+import {
+  addCommentsInTheShort,
+  addReplyInTheCommentOfTheShort,
+  createShort,
+  getAllShorts,
+  getViewsOfTheShort,
+  toggleDislikesOfShort,
+  toggleLikesOfShort,
+  toggleSavedByOfShort,
+} from "../controllers/short.controller.js";
 import uploads from "../middlewares/multer.js";
 
 const contentRouter = express.Router();
@@ -30,16 +39,20 @@ contentRouter.put(
   protectedRoute,
   getViewsOfTheVideo
 );
-contentRouter.put("/video/:videoId/toggleLikes", protectedRoute, toggleLikes);
+contentRouter.put(
+  "/video/:videoId/toggleLikes",
+  protectedRoute,
+  toggleLikesOfVideo
+);
 contentRouter.put(
   "/video/:videoId/toggleDislikes",
   protectedRoute,
-  toggleDislikes
+  toggleDislikesOfVideo
 );
 contentRouter.put(
   "/video/:videoId/toggleSavedBy",
   protectedRoute,
-  toggleSavedBy
+  toggleSavedByOfVideo
 );
 contentRouter.post(
   "/video/:videoId/addCommentsInTheVideo",
@@ -60,6 +73,36 @@ contentRouter.post(
   createShort
 );
 contentRouter.get("/getAllShorts", protectedRoute, getAllShorts);
+contentRouter.put(
+  "/short/:shortId/getViewsOfTheShort",
+  protectedRoute,
+  getViewsOfTheShort
+);
+contentRouter.put(
+  "/short/:shortId/toggleLikes",
+  protectedRoute,
+  toggleLikesOfShort
+);
+contentRouter.put(
+  "/short/:shortId/toggleDislikes",
+  protectedRoute,
+  toggleDislikesOfShort
+);
+contentRouter.put(
+  "/short/:shortId/toggleSavedBy",
+  protectedRoute,
+  toggleSavedByOfShort
+);
+contentRouter.post(
+  "/short/:shortId/addCommentsInTheShort",
+  protectedRoute,
+  addCommentsInTheShort
+);
+contentRouter.post(
+  "/short/:shortId/:commentId/addReplyInTheComment",
+  protectedRoute,
+  addReplyInTheCommentOfTheShort
+);
 // shorts
 
 export default contentRouter;

@@ -4,7 +4,11 @@ const VideoDescription = ({ text }) => {
   const [expand, setExpand] = useState(false);
   const showMore = text?.length > 100;
   return (
-    <div>
+    <div
+      className={`relative ${
+        expand ? "h-48" : "h-12"
+      } overflow-y-auto p-1 scrollbar-hide`}
+    >
       <p
         className={`text-sm text-gray-300 whitespace-pre-line ${
           expand ? "" : "line-clamp-1"

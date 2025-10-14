@@ -55,11 +55,161 @@ export const getAllShorts = async (req, res) => {
     const getShorts = await shortModel
       .find()
       .sort({ createdAt: -1 })
-      .populate("channel");
+      .populate("channel")
+      .populate({
+        path: "comments.author",
+        select: "userName photoUrl",
+      })
+      .populate({
+        path: "comments.replies.author",
+        select: "userName photoUrl",
+      });
     if (!getShorts) {
       return res.status(404).json({ message: "No shorts found" });
     }
     return res.status(200).json(getShorts);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const toggleLikesOfShort = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const userId = req.user._id;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    const isLiked = short.likes.includes(userId);
+    if (isLiked) {
+      short.likes.pull(userId);
+    } else {
+      short.likes.push(userId);
+      short.dislikes.pull(userId);
+    }
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const toggleDislikesOfShort = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const userId = req.user._id;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    const isDisliked = short.dislikes.includes(userId);
+    if (isDisliked) {
+      short.dislikes.pull(userId);
+    } else {
+      short.dislikes.push(userId);
+      short.likes.pull(userId);
+    }
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const toggleSavedByOfShort = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const userId = req.user._id;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    const isSavedBy = short.savedBy.includes(userId);
+    if (isSavedBy) {
+      short.savedBy.pull(userId);
+    } else {
+      short.savedBy.push(userId);
+    }
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getViewsOfTheShort = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    short.views += 1;
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const addCommentsInTheShort = async (req, res) => {
+  try {
+    const { shortId } = req.params;
+    const userId = req.user._id;
+    const { message } = req.body;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    short.comments.push({ author: userId, message });
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const addReplyInTheCommentOfTheShort = async (req, res) => {
+  try {
+    const { shortId, commentId } = req.params;
+    const userId = req.user._id;
+    const { message } = req.body;
+    const short = await shortModel.findById(shortId);
+    if (!short) {
+      return res.status(404).json({ message: "Short not found" });
+    }
+    const findOriginalComment = short.comments.id(commentId);
+    if (!findOriginalComment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+    findOriginalComment.replies.push({ author: userId, message });
+    await short.save();
+    await short.populate("comments.author", "userName photoUrl");
+    await short.populate("channel");
+    await short.populate("comments.replies.author", "userName photoUrl");
+    return res.status(200).json(short);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });

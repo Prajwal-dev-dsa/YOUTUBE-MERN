@@ -16,7 +16,7 @@ const DisplayShortsInHomePage = () => {
         <SiYoutubeshorts className="text-red-600 size-6" />
         Shorts
       </h2>
-      <div className="flex gap-6 overflow-x-auto pb-4 scroll-hide">
+      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
         {shorts?.map((short) => (
           <ShortCard
             key={short?._id}

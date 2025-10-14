@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import CustomAlert from "./components/CustomAlert";
-import Shorts from "./pages/Shorts";
+import Shorts from "./pages/Shorts/Shorts";
 import { useUserStore } from "./store/useUserStore";
 import ProfileForMobileView from "./components/ProfileForMobileView";
 import ForgotPassword from "./pages/ForgotPassword";
