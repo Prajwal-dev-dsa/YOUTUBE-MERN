@@ -14,6 +14,7 @@ import VideoDescription from "../../components/VideoDescription";
 import { useUserStore } from "../../store/useUserStore";
 import axios from "axios";
 import { serverURL } from "../../App";
+import { useParams } from "react-router-dom";
 
 const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   return (
@@ -37,7 +38,8 @@ const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   );
 };
 
-const Shorts = () => {
+const PlayShort = () => {
+  const { shortId } = useParams();
   const { loggedInUserData } = useUserStore();
   const { shorts } = useContentStore();
   const [shortList, setShortList] = useState([]);
@@ -50,8 +52,17 @@ const Shorts = () => {
 
   useEffect(() => {
     if (!shorts) return;
+    const shortToBePlayedFirst = shorts.find((short) => short?._id === shortId);
     const shuffleShorts = [...shorts].sort(() => Math.random() - 0.5);
-    setShortList(shuffleShorts);
+    if (shortToBePlayedFirst) {
+      const newShuffleShorts = shuffleShorts.filter(
+        (short) => short?._id !== shortId
+      );
+      newShuffleShorts.unshift(shortToBePlayedFirst);
+      setShortList(newShuffleShorts);
+    } else {
+      setShortList(shuffleShorts);
+    }
   }, [shorts]);
 
   useEffect(() => {
@@ -256,13 +267,13 @@ const Shorts = () => {
   };
 
   return (
-    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide">
+    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-[#0f0f0f] min-h-screen relative text-white">
       {shortList.map((short, index) => (
         <div
           key={short?._id}
-          className="min-h-screen w-full flex md:items-center items-start mt-[90px] md:mt[0px] justify-center snap-start pt-[40px] md:pt-[0px]"
+          className="min-h-screen w-full flex md:items-center items-start justify-center snap-start pt-[40px] md:pt-[0px]"
         >
-          <div className="relative w-full max-w-sm aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-xl border border-gray-700 cursor-pointer">
+          <div className="relative mt-[90px] md:mt[0px]  w-full max-w-sm aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-xl border border-gray-700 cursor-pointer">
             <video
               src={short?.shortUrl}
               ref={(el) => (shortRefs.current[index] = el)}
@@ -482,4 +493,4 @@ const ReplyCard = ({ short, comment, handleReply }) => {
   );
 };
 
-export default Shorts;
+export default PlayShort;

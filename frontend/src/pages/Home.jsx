@@ -209,7 +209,10 @@ const Home = () => {
           icon={<SiYoutubeshorts />}
           text="Shorts"
           active={activeItem === "Shorts"}
-          onClick={() => setActiveItem("Shorts")}
+          onClick={() => {
+            setActiveItem("Shorts");
+            navigate("/shorts");
+          }}
         />
         <MobileBarItem
           icon={<IoIosAddCircle size={40} />}

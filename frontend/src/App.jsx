@@ -20,6 +20,7 @@ import CreatePost from "./pages/Posts/CreatePost";
 import CreatePlaylist from "./pages/Playlists/CreatePlaylist";
 import { useContentStore } from "./store/useContentStore";
 import PlayVideo from "./pages/Videos/PlayVideo";
+import PlayShort from "./pages/Shorts/PlayShort";
 
 export const serverURL = "http://localhost:8000";
 
@@ -132,6 +133,7 @@ const App = () => {
           }
         />
         <Route path="/play-video/:videoId" element={<PlayVideo />} />
+        <Route path="/play-short/:shortId" element={<PlayShort />} />
       </Routes>
     </>
   );
