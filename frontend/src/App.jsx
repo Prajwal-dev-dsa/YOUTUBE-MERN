@@ -33,14 +33,21 @@ const ProtectedRoute = ({ loggedInUserData, children }) => {
 
 const App = () => {
   const { getCurrentLoggedInUser, loggedInUserData } = useUserStore();
-  const { getUserChannel } = useChannelStore();
+  const { getUserChannel, getAllChannels } = useChannelStore();
   const { getAllVideos, getAllShorts } = useContentStore();
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
     getAllVideos();
     getAllShorts();
-  }, [getCurrentLoggedInUser, getUserChannel, getAllVideos, getAllShorts]);
+    getAllChannels();
+  }, [
+    getCurrentLoggedInUser,
+    getUserChannel,
+    getAllVideos,
+    getAllShorts,
+    getAllChannels,
+  ]);
   return (
     <>
       <CustomAlert />

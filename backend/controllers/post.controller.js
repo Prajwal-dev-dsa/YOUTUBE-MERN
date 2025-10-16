@@ -13,17 +13,20 @@ export const createPost = async (req, res) => {
       return res.status(404).json({ message: "Channel not found" });
     }
 
-    const imagePath = req.file.path;
-    const uploadImage = await uploadOnCloudinary(imagePath);
-    const imageUrl = uploadImage.secure_url;
+    let imageUrl;
+    if (req.file) {
+      const imagePath = req.file.path;
+      const uploadImage = await uploadOnCloudinary(imagePath);
+      imageUrl = uploadImage.secure_url;
+    }
 
     const post = await postModel.create({
       content,
       channel: channelId,
       image: imageUrl,
     });
-    await channel.findByIdAndUpdate(channelId, {
-      $push: { posts: post._id },
+    await channelModel.findByIdAndUpdate(channelId, {
+      $push: { communityPosts: post._id },
     });
     return res.status(200).json({ message: "Post created successfully", post });
   } catch (error) {

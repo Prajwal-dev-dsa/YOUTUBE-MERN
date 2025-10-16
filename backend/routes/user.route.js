@@ -3,6 +3,7 @@ import { protectedRoute } from "../middlewares/protectedRoute.js";
 import {
   getCurrentLoggedInUser,
   getUserChannel,
+  getAllChannels,
   toggleSubscribers,
   createChannel,
   customizeChannel,
@@ -13,6 +14,7 @@ const userRouter = express.Router();
 
 userRouter.get("/", protectedRoute, getCurrentLoggedInUser);
 userRouter.get("/get-channel", protectedRoute, getUserChannel);
+userRouter.get("/get-all-channels", protectedRoute, getAllChannels);
 userRouter.post(
   "/create-channel",
   protectedRoute,

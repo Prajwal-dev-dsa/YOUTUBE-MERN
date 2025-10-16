@@ -156,7 +156,26 @@ export const getAllChannels = async (req, res) => {
     const channels = await Channel.find()
       .populate("owner")
       .populate("shorts")
-      .populate("videos");
+      .populate("videos")
+      .populate("subscribers")
+      .populate({
+        path: "communityPosts",
+        populate: {
+          path: "channel",
+          model: "Channel",
+        },
+      })
+      .populate({
+        path: "playlists",
+        populate: {
+          path: "videos",
+          model: "Video",
+          populate: {
+            path: "channel",
+            model: "Channel",
+          },
+        },
+      });
     if (!channels || channels.length === 0) {
       return res.status(404).json({ message: "Channels not found" });
     }

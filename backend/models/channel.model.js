@@ -56,7 +56,7 @@ const channelSchema = new mongoose.Schema({
   communityPosts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "CommunityPost",
+      ref: "Post",
     },
   ],
 });
