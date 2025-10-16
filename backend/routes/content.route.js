@@ -21,6 +21,16 @@ import {
   toggleSavedByOfShort,
 } from "../controllers/short.controller.js";
 import uploads from "../middlewares/multer.js";
+import {
+  createPlaylist,
+  toggleSavedByPlaylist,
+} from "../controllers/playlist.controller.js";
+import {
+  addCommentsInThePost,
+  createPost,
+  getAllPosts,
+  toggleLikesOfPost,
+} from "../controllers/post.controller.js";
 
 const contentRouter = express.Router();
 
@@ -104,5 +114,33 @@ contentRouter.post(
   addReplyInTheCommentOfTheShort
 );
 // shorts
+
+contentRouter.post("/create-playlist", protectedRoute, createPlaylist);
+contentRouter.put(
+  "/playlist/toggleSavedBy",
+  protectedRoute,
+  toggleSavedByPlaylist
+);
+// playlists
+
+contentRouter.post(
+  "/create-post",
+  protectedRoute,
+  uploads.single("image"),
+  createPost
+);
+contentRouter.get("/getAllPosts", getAllPosts);
+contentRouter.put("/post/toggleLikes", protectedRoute, toggleLikesOfPost);
+contentRouter.post(
+  "/post/addCommentsInThePost",
+  protectedRoute,
+  addCommentsInThePost
+);
+contentRouter.post(
+  "/post/addReplyInTheComment",
+  protectedRoute,
+  addReplyInTheComment
+);
+// posts
 
 export default contentRouter;
