@@ -27,14 +27,14 @@ export const createPlaylist = async (req, res) => {
       videos: getVideosById,
     });
 
-    await channel.findByIdAndUpdate(channelId, {
+    await channelModel.findByIdAndUpdate(channelId, {
       $push: { playlists: playlist._id },
     });
 
     return res.status(200).json(playlist);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: error.message });
   }
 };
 

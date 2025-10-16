@@ -110,7 +110,8 @@ export const getUserChannel = async (req, res) => {
     const channel = await Channel.findOne({ owner: userId })
       .populate("owner")
       .populate("shorts")
-      .populate("videos");
+      .populate("videos")
+      .populate("playlists");
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
     }
@@ -144,6 +145,22 @@ export const toggleSubscribers = async (req, res) => {
       .populate("shorts")
       .populate("videos");
     return res.status(200).json(updatedChannel);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getAllChannels = async (req, res) => {
+  try {
+    const channels = await Channel.find()
+      .populate("owner")
+      .populate("shorts")
+      .populate("videos");
+    if (!channels || channels.length === 0) {
+      return res.status(404).json({ message: "Channels not found" });
+    }
+    return res.status(200).json(channels);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
