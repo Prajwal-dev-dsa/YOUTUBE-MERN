@@ -21,6 +21,7 @@ import CreatePlaylist from "./pages/Playlists/CreatePlaylist";
 import { useContentStore } from "./store/useContentStore";
 import PlayVideo from "./pages/Videos/PlayVideo";
 import PlayShort from "./pages/Shorts/PlayShort";
+import ChannelPage from "./pages/Channel/ChannelPage";
 
 export const serverURL = "http://localhost:8000";
 
@@ -123,6 +124,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<CreatePlaylist />}
+              />
+            }
+          />
+          <Route
+            path="/channel-page/:channelId"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<ChannelPage />}
               />
             }
           />

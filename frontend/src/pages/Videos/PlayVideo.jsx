@@ -411,12 +411,16 @@ const PlayVideo = () => {
           {/* Channel Info Section */}
           <div className="flex items-center gap-4">
             <img
+              onClick={() => navigate(`/channel-page/${channel?._id}`)}
               src={channel?.avatar}
-              className="size-12 rounded-full border-2 border-gray-600 flex-shrink-0"
+              className="size-12 rounded-full border-2 border-gray-600 cursor-pointer flex-shrink-0"
               alt="channel avatar"
             />
             <div>
-              <h2 className="text-sm font-semibold text-white">
+              <h2
+                className="text-sm font-semibold text-white cursor-pointer"
+                onClick={() => navigate(`/channel-page/${channel?._id}`)}
+              >
                 {channel?.name}
               </h2>
               <p className="text-xs text-gray-400">
@@ -576,9 +580,12 @@ const PlayVideo = () => {
                 </h3>
                 <div className="flex items-center gap-2 mt-2 my-1">
                   <img
+                    onClick={() =>
+                      navigate(`/channel-page/${sVideo?.channel?._id}`)
+                    }
                     src={sVideo?.channel?.avatar}
                     alt=""
-                    className="w-6 h-6 object-cover rounded-full"
+                    className="w-6 h-6 object-cover rounded-full cursor-pointer"
                   />
                   <span className="text-xs text-gray-400">
                     {sVideo?.channel?.name}

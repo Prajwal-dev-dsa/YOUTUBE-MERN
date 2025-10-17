@@ -2,6 +2,13 @@ import channelModel from "../models/channel.model.js";
 import postModel from "../models/post.model.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
 
+const populatePost = (query) => {
+  return query
+    .populate("channel", "name avatar")
+    .populate("comments.author", "userName photoUrl")
+    .populate("comments.replies.author", "userName photoUrl");
+};
+
 export const createPost = async (req, res) => {
   try {
     const { content, channelId } = req.body;
@@ -28,7 +35,10 @@ export const createPost = async (req, res) => {
     await channelModel.findByIdAndUpdate(channelId, {
       $push: { communityPosts: post._id },
     });
-    return res.status(200).json({ message: "Post created successfully", post });
+    const populatedPost = await populatePost(postModel.findById(post._id));
+    return res
+      .status(200)
+      .json({ message: "Post created successfully", post: populatedPost });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -37,10 +47,7 @@ export const createPost = async (req, res) => {
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await postModel
-      .find()
-      .populate("channel")
-      .sort({ createdAt: -1 });
+    const posts = await populatePost(postModel.find()).sort({ createdAt: -1 });
     if (!posts) {
       return res.status(404).json({ message: "Posts not found" });
     }
@@ -66,7 +73,8 @@ export const toggleLikesOfPost = async (req, res) => {
       post.likes.push(userId);
     }
     await post.save();
-    return res.status(200).json(post);
+    const populatedPost = await populatePost(postModel.findById(post._id));
+    return res.status(200).json(populatedPost);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -75,26 +83,15 @@ export const toggleLikesOfPost = async (req, res) => {
 
 export const addCommentsInThePost = async (req, res) => {
   try {
-    const { postId } = req.body;
+    const { postId, message } = req.body;
     const userId = req.user._id;
-    const { message } = req.body;
     const post = await postModel.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
     post.comments.push({ author: userId, message });
     await post.save();
-    const populatedPost = await postModel
-      .findById(postId)
-      .populate({
-        path: "comments.author",
-        select: "userName photoUrl email",
-      })
-      .populate({
-        path: "comments.replies.author",
-        select: "userName photoUrl email",
-      })
-      .sort({ createdAt: -1 });
+    const populatedPost = await populatePost(postModel.findById(postId));
     return res.status(200).json(populatedPost);
   } catch (error) {
     console.log(error);
@@ -102,11 +99,10 @@ export const addCommentsInThePost = async (req, res) => {
   }
 };
 
-export const addReplyInTheComment = async (req, res) => {
+export const addReplyToPostComment = async (req, res) => {
   try {
-    const { postId, commentId } = req.body;
+    const { postId, commentId, message } = req.body;
     const userId = req.user._id;
-    const { message } = req.body;
     const post = await postModel.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -117,17 +113,7 @@ export const addReplyInTheComment = async (req, res) => {
     }
     findOriginalComment.replies.push({ author: userId, message });
     await post.save();
-    const populatedPost = await postModel
-      .findById(postId)
-      .populate({
-        path: "comments.author",
-        select: "userName photoUrl email",
-      })
-      .populate({
-        path: "comments.replies.author",
-        select: "userName photoUrl email",
-      })
-      .sort({ createdAt: -1 });
+    const populatedPost = await populatePost(postModel.findById(postId));
     return res.status(200).json(populatedPost);
   } catch (error) {
     console.log(error);

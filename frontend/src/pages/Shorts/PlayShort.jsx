@@ -4,7 +4,6 @@ import {
   FaArrowDown,
   FaBookmark,
   FaComment,
-  FaCross,
   FaDownload,
   FaPlay,
   FaThumbsDown,
@@ -14,7 +13,7 @@ import VideoDescription from "../../components/VideoDescription";
 import { useUserStore } from "../../store/useUserStore";
 import axios from "axios";
 import { serverURL } from "../../App";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   return (
@@ -39,6 +38,7 @@ const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
 };
 
 const PlayShort = () => {
+  const navigate = useNavigate();
   const { shortId } = useParams();
   const { loggedInUserData } = useUserStore();
   const { shorts } = useContentStore();
@@ -295,11 +295,19 @@ const PlayShort = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-1">
               <div className="flex items-center gap-2">
                 <img
+                  onClick={() =>
+                    navigate(`/channel-page/${short?.channel?._id}`)
+                  }
                   src={short?.channel?.avatar}
                   alt=""
-                  className="size-8 rounded-full border-1 border-gray-600"
+                  className="size-8 rounded-full border-1 border-gray-600 cursor-pointer"
                 />
-                <p className="text-sm text-white px-1">
+                <p
+                  className="text-sm text-white px-1 cursor-pointer"
+                  onClick={() =>
+                    navigate(`/channel-page/${short?.channel?._id}`)
+                  }
+                >
                   {short?.channel?.name}
                 </p>
                 <button
@@ -444,7 +452,6 @@ const PlayShort = () => {
   );
 };
 
-// At the bottom of Shorts.jsx
 const ReplyCard = ({ short, comment, handleReply }) => {
   const [replyText, setReplyText] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);

@@ -160,10 +160,12 @@ export const getAllChannels = async (req, res) => {
       .populate("subscribers")
       .populate({
         path: "communityPosts",
-        populate: {
-          path: "channel",
-          model: "Channel",
-        },
+        options: { sort: { createdAt: -1 } },
+        populate: [
+          { path: "channel", select: "name avatar" },
+          { path: "comments.author", select: "userName photoUrl" },
+          { path: "comments.replies.author", select: "userName photoUrl" },
+        ],
       })
       .populate({
         path: "playlists",

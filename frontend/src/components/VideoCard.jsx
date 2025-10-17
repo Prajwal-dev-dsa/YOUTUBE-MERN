@@ -1,47 +1,83 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import moment from "moment";
 
 const VideoCard = ({
+  id,
   thumbnail,
   duration,
   channelLogo,
   title,
   channelName,
   views,
-  id,
+  createdAt,
+  isHorizontal = false,
 }) => {
-  const navigate = useNavigate();
+  const timeAgo = createdAt ? moment(createdAt).fromNow() : null;
+
+  if (isHorizontal) {
+    return (
+      <Link
+        to={`/play-video/${id}`}
+        className="flex items-start w-full gap-3 p-2 hover:bg-neutral-800 rounded-lg transition duration-200"
+      >
+        <div className="relative flex-shrink-0 w-40 h-24 overflow-hidden rounded-lg">
+          <img
+            src={thumbnail}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+          {duration && (
+            <span className="absolute bottom-1 right-1 bg-black/75 text-white text-xs px-1.5 py-0.5 rounded">
+              {duration}
+            </span>
+          )}
+        </div>
+
+        <div className="flex-grow">
+          <h3 className="text-white text-sm font-medium line-clamp-2">
+            {title}
+          </h3>
+          <p className="text-gray-400 text-xs mt-1">{channelName}</p>
+          <p className="text-gray-400 text-xs">
+            {views} views {timeAgo && `• ${timeAgo}`}
+          </p>
+        </div>
+      </Link>
+    );
+  }
+
   return (
-    <div
-      className="w-full cursor-pointer"
-      onClick={() => navigate(`/play-video/${id}`)}
-    >
-      <div className="relative">
+    <Link to={`/play-video/${id}`} className="w-full cursor-pointer group">
+      <div className="relative w-full aspect-video rounded-xl overflow-hidden">
         <img
           src={thumbnail}
           alt={title}
-          className="rounded-xl w-full sm:h-[160px] h-[200px] border-1 border-gray-800 object-cover"
+          className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
         />
-        <span className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded-lg text-xs">
-          {duration}
-        </span>
+        {duration && (
+          <span className="absolute bottom-1 right-1 bg-black/75 text-white text-xs px-1.5 py-0.5 rounded">
+            {duration}
+          </span>
+        )}
       </div>
-      <div className="flex mt-3">
+      <div className="flex items-start gap-3 mt-3">
         <img
           src={channelLogo}
           alt={channelName}
-          className="w-11 h-11 mr-3 rounded-full"
+          className="w-9 h-9 mr-0 rounded-full object-cover"
         />
         <div>
-          <h3 className="text-xs text-gray-400 font-semibold mt-1">{title}</h3>
-          <div className="flex gap-2 mt-1">
-            <p className="text-xs text-gray-400">{channelName}</p>
-            <p className="text-xs text-gray-400">.</p>
-            <p className="text-xs text-gray-400">{views} views</p>
-          </div>
+          <h3 className="text-white font-medium text-base line-clamp-2 leading-snug">
+            {title}
+          </h3>
+          <p className="text-gray-400 text-sm mt-1">{channelName}</p>
+          <p className="text-gray-400 text-xs">
+            {views} views {timeAgo && `• ${timeAgo}`}
+          </p>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

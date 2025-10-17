@@ -30,6 +30,7 @@ import {
   createPost,
   getAllPosts,
   toggleLikesOfPost,
+  addReplyToPostComment,
 } from "../controllers/post.controller.js";
 
 const contentRouter = express.Router();
@@ -129,7 +130,7 @@ contentRouter.post(
   uploads.single("image"),
   createPost
 );
-contentRouter.get("/getAllPosts", getAllPosts);
+contentRouter.get("/getAllPosts", protectedRoute, getAllPosts); // Added protectedRoute
 contentRouter.put("/post/toggleLikes", protectedRoute, toggleLikesOfPost);
 contentRouter.post(
   "/post/addCommentsInThePost",
@@ -139,7 +140,7 @@ contentRouter.post(
 contentRouter.post(
   "/post/addReplyInTheComment",
   protectedRoute,
-  addReplyInTheComment
+  addReplyToPostComment
 );
 // posts
 
