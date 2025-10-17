@@ -24,6 +24,7 @@ import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
 import LikedContent from "./pages/LikedContent";
 import SavedContent from "./pages/SavedContent";
+import SavedPlaylist from "./pages/SavedPlaylist";
 
 export const serverURL = "http://localhost:8000";
 
@@ -153,6 +154,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<SavedContent />}
+              />
+            }
+          />
+          <Route
+            path="/saved-playlist"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<SavedPlaylist />}
               />
             }
           />

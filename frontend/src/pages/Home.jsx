@@ -170,7 +170,10 @@ const Home = () => {
             text="Playlist"
             open={sideBarOpen}
             selected={selectedItem === "Playlist"}
-            onClick={() => setSelectedItem("Playlist")}
+            onClick={() => {
+              setSelectedItem("Playlist");
+              navigate("/saved-playlist");
+            }}
           />
           <SideBarItem
             icon={<GoVideo />}

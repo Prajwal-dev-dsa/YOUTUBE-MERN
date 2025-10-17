@@ -114,9 +114,9 @@ const LikedContent = () => {
             <GoVideo className="size-7 text-red-600" />
             Videos
           </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex flex-wrap">
             {likedVideos.map((video) => (
-              <div className="sm:size-60 size-50 flex-shrink-0" key={video._id}>
+              <div className="sm:size-60 size-87 flex-shrink-0" key={video._id}>
                 <VideoCard
                   videoUrl={video?.videoUrl}
                   title={video?.title}

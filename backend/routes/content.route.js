@@ -27,6 +27,7 @@ import {
 import uploads from "../middlewares/multer.js";
 import {
   createPlaylist,
+  getAllSavedPlaylists,
   toggleSavedByPlaylist,
 } from "../controllers/playlist.controller.js";
 import {
@@ -124,6 +125,11 @@ contentRouter.get("/getUserLikedShorts", protectedRoute, getUserLikedShorts);
 contentRouter.get("/getUserSavedShorts", protectedRoute, getUserSavedShorts);
 // shorts
 
+contentRouter.get(
+  "/getAllSavedPlaylists",
+  protectedRoute,
+  getAllSavedPlaylists
+);
 contentRouter.post("/create-playlist", protectedRoute, createPlaylist);
 contentRouter.put(
   "/playlist/toggleSavedBy",

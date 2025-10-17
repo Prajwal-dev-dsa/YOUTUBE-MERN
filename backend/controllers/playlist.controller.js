@@ -59,3 +59,25 @@ export const toggleSavedByPlaylist = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getAllSavedPlaylists = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const savedPlaylists = await playlistModel.find({ savedBy: userId })
+    .populate("videos")
+    .populate({
+      path:"videos",
+      populate:{
+        path:"channel",
+        select:"name avatar"
+      }
+    })
+    if (!savedPlaylists) {
+      return res.status(404).json({ message: "No saved playlists found" });
+    }
+    return res.status(200).json(savedPlaylists);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
