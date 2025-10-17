@@ -23,6 +23,7 @@ import PlayVideo from "./pages/Videos/PlayVideo";
 import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
 import LikedContent from "./pages/LikedContent";
+import SavedContent from "./pages/SavedContent";
 
 export const serverURL = "http://localhost:8000";
 
@@ -143,6 +144,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<LikedContent />}
+              />
+            }
+          />
+          <Route
+            path="/saved-content"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<SavedContent />}
               />
             }
           />

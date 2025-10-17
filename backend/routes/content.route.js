@@ -10,6 +10,7 @@ import {
   addCommentsInTheVideo,
   addReplyInTheComment,
   getUserLikedVideos,
+  getUserSavedVideos,
 } from "../controllers/video.controller.js";
 import {
   addCommentsInTheShort,
@@ -17,6 +18,7 @@ import {
   createShort,
   getAllShorts,
   getUserLikedShorts,
+  getUserSavedShorts,
   getViewsOfTheShort,
   toggleDislikesOfShort,
   toggleLikesOfShort,
@@ -78,6 +80,7 @@ contentRouter.post(
   addReplyInTheComment
 );
 contentRouter.get("/getUserLikedVideos", protectedRoute, getUserLikedVideos);
+contentRouter.get("/getUserSavedVideos", protectedRoute, getUserSavedVideos);
 // videos
 
 contentRouter.post(
@@ -118,6 +121,7 @@ contentRouter.post(
   addReplyInTheCommentOfTheShort
 );
 contentRouter.get("/getUserLikedShorts", protectedRoute, getUserLikedShorts);
+contentRouter.get("/getUserSavedShorts", protectedRoute, getUserSavedShorts);
 // shorts
 
 contentRouter.post("/create-playlist", protectedRoute, createPlaylist);

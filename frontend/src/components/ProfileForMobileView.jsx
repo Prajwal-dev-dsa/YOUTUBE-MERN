@@ -127,7 +127,11 @@ const ProfileForMobileView = () => {
           onClick={() => navigate("/liked-content")}
           text="Liked Videos"
         />
-        <ProfileMenuItem icon={<GoVideo />} text="Saved Videos" />
+        <ProfileMenuItem
+          icon={<GoVideo />}
+          onClick={() => navigate("/saved-content")}
+          text="Saved Videos"
+        />
         <ProfileMenuItem icon={<SiYoutubestudio />} text="YouTube Studio" />
         <ProfileMenuItem
           icon={<MdOutlineSubscriptions />}

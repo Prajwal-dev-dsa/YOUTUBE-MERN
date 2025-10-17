@@ -177,7 +177,10 @@ const Home = () => {
             text="Saved Videos"
             open={sideBarOpen}
             selected={selectedItem === "Saved Videos"}
-            onClick={() => setSelectedItem("Saved Videos")}
+            onClick={() => {
+              setSelectedItem("Saved Videos");
+              navigate("/saved-content");
+            }}
           />
           <SideBarItem
             icon={<FaThumbsUp />}

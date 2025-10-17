@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { serverURL } from "../App";
-import DisplayVideosInHomePage from "../components/DisplayVideosInHomePage";
-import DisplayShortsInHomePage from "../components/DisplayShortsInHomePage";
 import { SiYoutubeshorts } from "react-icons/si";
 import ShortCard from "../components/ShortCard";
 import { GoVideo } from "react-icons/go";
@@ -24,76 +22,76 @@ const getVideoDuration = (videoUrl, callback) => {
   };
 };
 
-const LikedContent = () => {
-  const [likedVideos, setLikedVideos] = useState([]);
-  const [likedShorts, setLikedShorts] = useState([]);
+const SavedContent = () => {
+  const [savedVideos, setSavedVideos] = useState([]);
+  const [savedShorts, setSavedShorts] = useState([]);
 
   const [duration, setDuration] = useState({});
 
   useEffect(() => {
-    if (Array.isArray(likedVideos) && likedVideos.length > 0) {
-      likedVideos.forEach((video) => {
+    if (Array.isArray(savedVideos) && savedVideos.length > 0) {
+      savedVideos.forEach((video) => {
         getVideoDuration(video.videoUrl, (formattedTime) => {
           setDuration((prev) => ({ ...prev, [video._id]: formattedTime }));
         });
       });
     }
-  }, [likedVideos]);
+  }, [savedVideos]);
 
   useEffect(() => {
-    const fetchLikedVideos = async () => {
+    const fetchSavedVideos = async () => {
       try {
         const videosResponse = await axios.get(
-          `${serverURL}/api/content/getUserLikedVideos`,
+          `${serverURL}/api/content/getUserSavedVideos`,
           {
             withCredentials: true,
           }
         );
         console.log(videosResponse);
 
-        setLikedVideos(videosResponse.data);
+        setSavedVideos(videosResponse.data);
       } catch (error) {
         console.log(error);
       }
     };
-    const fetchLikedShorts = async () => {
+    const fetchSavedShorts = async () => {
       try {
         const shortsResponse = await axios.get(
-          `${serverURL}/api/content/getUserLikedShorts`,
+          `${serverURL}/api/content/getUserSavedShorts`,
           {
             withCredentials: true,
           }
         );
         console.log(shortsResponse);
 
-        setLikedShorts(shortsResponse.data);
+        setSavedShorts(shortsResponse.data);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchLikedVideos();
-    fetchLikedShorts();
+    fetchSavedVideos();
+    fetchSavedShorts();
   }, []);
 
-  if (likedVideos.length === 0 && likedShorts.length === 0) {
+  if (savedVideos.length === 0 && savedShorts.length === 0) {
     return (
       <div className="flex items-center justify-center h-[80vh]">
         <h2 className="text-2xl text-gray-400 font-semibold">
-          No liked content found
+          No saved content found
         </h2>
       </div>
     );
   }
   return (
     <div className="px-6 py-4 min-h-screen">
-      {likedVideos.length > 0 && (
+      {savedVideos.length > 0 && (
         <>
           <h2 className="text-2xl font-semibold mb-6 border-b border-gray-300 pb-2 flex items-center gap-2">
             <SiYoutubeshorts className="size-7 text-red-600" />
             Shorts
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {likedShorts.map((short) => (
+            {savedShorts.map((short) => (
               <div className="flex-shrink-0" key={short._id}>
                 <ShortCard
                   shortUrl={short?.shortUrl}
@@ -108,14 +106,14 @@ const LikedContent = () => {
           </div>
         </>
       )}
-      {likedVideos.length > 0 && (
+      {savedVideos.length > 0 && (
         <>
           <h2 className="text-2xl font-semibold mb-6 pt-[50px] border-b border-gray-300 pb-2 flex items-center gap-2">
             <GoVideo className="size-7 text-red-600" />
             Videos
           </h2>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {likedVideos.map((video) => (
+            {savedVideos.map((video) => (
               <div className="sm:size-60 size-50 flex-shrink-0" key={video._id}>
                 <VideoCard
                   videoUrl={video?.videoUrl}
@@ -136,4 +134,4 @@ const LikedContent = () => {
   );
 };
 
-export default LikedContent;
+export default SavedContent;

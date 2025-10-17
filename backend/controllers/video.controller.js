@@ -235,3 +235,22 @@ export const getUserLikedVideos = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getUserSavedVideos = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const savedVideos = await videoModel
+      .find({ savedBy: userId })
+      .populate("channel", "name avatar")
+      .populate("likes", "userName photoUrl email")
+      .sort({ createdAt: -1 });
+
+    if (!savedVideos) {
+      return res.status(404).json({ message: "No saved videos found" });
+    }
+    return res.status(200).json(savedVideos);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
