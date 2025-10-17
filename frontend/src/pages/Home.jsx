@@ -184,7 +184,10 @@ const Home = () => {
             text="Liked Videos"
             open={sideBarOpen}
             selected={selectedItem === "Liked Videos"}
-            onClick={() => setSelectedItem("Liked Videos")}
+            onClick={() => {
+              setSelectedItem("Liked Videos");
+              navigate("/liked-content");
+            }}
           />
         </nav>
         <hr className="my-3 border-gray-800" />

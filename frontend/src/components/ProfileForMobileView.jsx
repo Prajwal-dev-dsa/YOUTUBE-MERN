@@ -17,7 +17,12 @@ import { serverURL } from "../App";
 
 const ProfileForMobileView = () => {
   const navigate = useNavigate();
-  const { loggedInUserData, logout, setLoggedInUserData, getCurrentLoggedInUser } = useUserStore(); // getting current loggedIn user's data
+  const {
+    loggedInUserData,
+    logout,
+    setLoggedInUserData,
+    getCurrentLoggedInUser,
+  } = useUserStore(); // getting current loggedIn user's data
 
   const logoutHandler = async () => {
     await logout();
@@ -117,7 +122,11 @@ const ProfileForMobileView = () => {
       <div className="flex flex-col mt-[2vh]">
         <ProfileMenuItem icon={<FaHistory />} text="History" />
         <ProfileMenuItem icon={<FaList />} text="Playlists" />
-        <ProfileMenuItem icon={<FaThumbsUp />} text="Liked Videos" />
+        <ProfileMenuItem
+          icon={<FaThumbsUp />}
+          onClick={() => navigate("/liked-content")}
+          text="Liked Videos"
+        />
         <ProfileMenuItem icon={<GoVideo />} text="Saved Videos" />
         <ProfileMenuItem icon={<SiYoutubestudio />} text="YouTube Studio" />
         <ProfileMenuItem

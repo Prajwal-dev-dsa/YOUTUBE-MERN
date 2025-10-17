@@ -22,6 +22,7 @@ import { useContentStore } from "./store/useContentStore";
 import PlayVideo from "./pages/Videos/PlayVideo";
 import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
+import LikedContent from "./pages/LikedContent";
 
 export const serverURL = "http://localhost:8000";
 
@@ -133,6 +134,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<ChannelPage />}
+              />
+            }
+          />
+          <Route
+            path="/liked-content"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<LikedContent />}
               />
             }
           />

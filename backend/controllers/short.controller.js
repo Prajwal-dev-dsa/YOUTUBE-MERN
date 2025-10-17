@@ -215,3 +215,22 @@ export const addReplyInTheCommentOfTheShort = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getUserLikedShorts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const likedShorts = await shortModel
+      .find({ likes: userId })
+      .populate("channel", "name avatar")
+      .populate("likes", "userName photoUrl email")
+      .sort({ createdAt: -1 });
+
+    if (!likedShorts) {
+      return res.status(404).json({ message: "No liked shorts found" });
+    }
+    return res.status(200).json(likedShorts);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
