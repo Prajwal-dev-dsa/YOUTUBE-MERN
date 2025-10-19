@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -25,6 +25,8 @@ import ChannelPage from "./pages/Channel/ChannelPage";
 import LikedContent from "./pages/LikedContent";
 import SavedContent from "./pages/SavedContent";
 import SavedPlaylist from "./pages/SavedPlaylist";
+import { useSubscribedContentStore } from "./store/useSubscribedContentStore";
+import Subscriptions from "./pages/Subscriptions";
 
 export const serverURL = "http://localhost:8000";
 
@@ -39,18 +41,21 @@ const App = () => {
   const { getCurrentLoggedInUser, loggedInUserData } = useUserStore();
   const { getUserChannel, getAllChannels } = useChannelStore();
   const { getAllVideos, getAllShorts } = useContentStore();
+  const { getSubscribedContentData } = useSubscribedContentStore();
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
     getAllVideos();
     getAllShorts();
     getAllChannels();
+    getSubscribedContentData();
   }, [
     getCurrentLoggedInUser,
     getUserChannel,
     getAllVideos,
     getAllShorts,
     getAllChannels,
+    getSubscribedContentData,
   ]);
   return (
     <>
@@ -163,6 +168,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<SavedPlaylist />}
+              />
+            }
+          />
+          <Route
+            path="/subscriptions"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Subscriptions />}
               />
             }
           />

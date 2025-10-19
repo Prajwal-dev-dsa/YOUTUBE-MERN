@@ -187,3 +187,63 @@ export const getAllChannels = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getSubscribedContentData = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const subscribers = await Channel.find({ subscribers: userId })
+      .populate({
+        path: "videos",
+        populate: {
+          path: "channel",
+          select: "name avatar",
+        },
+      })
+      .populate({
+        path: "shorts",
+        populate: {
+          path: "channel",
+          select: "name avatar",
+        },
+      })
+      .populate({
+        path: "playlists",
+        populate: {
+          path: "channel",
+          select: "name avatar",
+        },
+        populate: {
+          path: "videos",
+          populate: {
+            path: "channel",
+          },
+        },
+      })
+      .populate({
+        path: "communityPosts",
+        populate: [
+          { path: "channel", select: "name avatar" },
+          { path: "comments.author", select: "userName photoUrl" },
+          { path: "comments.replies.author", select: "userName photoUrl" },
+        ],
+      });
+
+    if (!subscribers || subscribers.length === 0) {
+      return res.status(404).json({ message: "No subscribed channels found" });
+    }
+
+    const videos = subscribers.flatMap((channel) => channel.videos);
+    const shorts = subscribers.flatMap((channel) => channel.shorts);
+    const playlists = subscribers.flatMap((channel) => channel.playlists);
+    const communityPosts = subscribers.flatMap(
+      (channel) => channel.communityPosts
+    );
+
+    return res
+      .status(200)
+      .json({ subscribers, videos, shorts, playlists, communityPosts });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

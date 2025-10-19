@@ -17,8 +17,11 @@ import { useUserStore } from "../store/useUserStore";
 import Profile from "../components/Profile";
 import DisplayVideosInHomePage from "../components/DisplayVideosInHomePage";
 import DisplayShortsInHomePage from "../components/DisplayShortsInHomePage";
+import { useSubscribedContentStore } from "../store/useSubscribedContentStore";
+import { SidebarOpen } from "lucide-react";
 
 const Home = () => {
+  const { subscribedChannels } = useSubscribedContentStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -152,7 +155,10 @@ const Home = () => {
             text="Subscriptions"
             open={sideBarOpen}
             selected={selectedItem === "Subscriptions"}
-            onClick={() => setSelectedItem("Subscriptions")}
+            onClick={() => {
+              setSelectedItem("Subscriptions");
+              navigate("/subscriptions");
+            }}
           />
         </nav>
         <hr className="my-3 border-gray-800" />
@@ -200,6 +206,33 @@ const Home = () => {
         {sideBarOpen && (
           <p className="text-md text-gray-400 px-4">Subscriptions</p>
         )}
+        <div className="space-y-2 mt-4">
+          {subscribedChannels?.map((channel) => (
+            <button
+              key={channel?._id}
+              onClick={() => {
+                setSelectedItem(channel?._id);
+                navigate(`/channel-page/${channel?._id}`);
+              }}
+              className={`flex items-center w-full text-left bg-[#121212] cursor-pointer p-2 rounded-lg transition ${
+                SidebarOpen ? "gap-3 justify-start" : "justify-center"
+              } ${
+                selectedItem === channel?._id
+                  ? "bg-[#272727]"
+                  : "hover:bg-[#272727]"
+              }`}
+            >
+              <img
+                src={channel?.avatar}
+                className="w-5 h-5 object-cover rounded-full"
+                alt=""
+              />
+              {SidebarOpen && (
+                <span className="text-sm truncate">{channel?.name}</span>
+              )}
+            </button>
+          ))}
+        </div>
         <nav className="space-y-2 mt-4"></nav>
       </aside>
 
@@ -235,7 +268,10 @@ const Home = () => {
           icon={<MdOutlineSubscriptions />}
           text="Subscriptions"
           active={activeItem === "Subscriptions"}
-          onClick={() => setActiveItem("Subscriptions")}
+          onClick={() => {
+            setActiveItem("Subscriptions");
+            navigate("/subscriptions");
+          }}
         />
         <MobileBarItem
           icon={

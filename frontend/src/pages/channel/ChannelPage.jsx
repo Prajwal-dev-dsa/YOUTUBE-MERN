@@ -9,6 +9,7 @@ import VideoCard from "../../components/VideoCard";
 import { useContentStore } from "../../store/useContentStore";
 import PlaylistCard from "../../components/PlaylistCard";
 import CommunityPostCard from "../../components/CommunityPostCard";
+import { useSubscribedContentStore } from "../../store/useSubscribedContentStore";
 
 const getVideoDuration = (videoUrl, callback) => {
   const video = document.createElement("video");
@@ -29,6 +30,8 @@ const getVideoDuration = (videoUrl, callback) => {
 const ChannelPage = () => {
   const { channelId } = useParams();
   const { allChannelsData } = useChannelStore();
+  const { getSubscribedContentData, subscribedChannels } =
+    useSubscribedContentStore();
   const { loggedInUserData } = useUserStore();
   const channelData = allChannelsData.find(
     (channel) => channel?._id === channelId
@@ -41,8 +44,27 @@ const ChannelPage = () => {
   const [duration, setDuration] = useState({});
 
   useEffect(() => {
+    if (allChannelsData && channelId) {
+      const currentChannelData = allChannelsData.find(
+        (ch) => ch?._id === channelId
+      );
+      setChannel(currentChannelData);
+      window.scrollTo(0, 0);
+    }
+  }, [channelId, allChannelsData]);
+
+  useEffect(() => {
     getAllVideos();
-  }, [getAllVideos]);
+    getSubscribedContentData();
+  }, [getAllVideos, getSubscribedContentData]);
+
+  useEffect(() => {
+    if (!channel || !loggedInUserData) return;
+    const isActuallySubscribed = subscribedChannels.some(
+      (subbedChannel) => subbedChannel._id === channel._id
+    );
+    setIsSubscribed(isActuallySubscribed);
+  }, [channel, loggedInUserData, subscribedChannels]);
 
   useEffect(() => {
     if (Array.isArray(videos) && videos.length > 0) {
@@ -55,11 +77,6 @@ const ChannelPage = () => {
       });
     }
   }, [videos]);
-
-  useEffect(() => {
-    if (!channel || !loggedInUserData) return;
-    setIsSubscribed(channel.subscribers.includes(loggedInUserData._id));
-  }, [channel, loggedInUserData]);
 
   const handleSubscribe = async () => {
     if (!channel) return;
