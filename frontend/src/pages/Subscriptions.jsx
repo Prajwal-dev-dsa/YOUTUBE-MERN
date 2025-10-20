@@ -8,6 +8,7 @@ import { SiYoutubeshorts } from "react-icons/si";
 import { GoVideo } from "react-icons/go";
 import { FaList } from "react-icons/fa";
 import CommunityPostCard from "../components/CommunityPostCard";
+import { ClipLoader } from "react-spinners";
 
 const getVideoDuration = (videoUrl, callback) => {
   const video = document.createElement("video");
@@ -36,6 +37,7 @@ const Subscriptions = () => {
   } = useSubscribedContentStore();
   const [duration, setDuration] = useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (
@@ -50,6 +52,7 @@ const Subscriptions = () => {
         }
       });
     }
+    setLoading(false);
   }, [subscribedChannelVideos]);
 
   const handlePostUpdate = (updatedPost) => {
@@ -60,6 +63,14 @@ const Subscriptions = () => {
       return { ...prevChannel, communityPosts: updatedPosts };
     });
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[80vh] text-white">
+        <ClipLoader color="#fff" size={40} />
+      </div>
+    );
+  }
 
   if (subscribedChannels?.length === 0) {
     return (

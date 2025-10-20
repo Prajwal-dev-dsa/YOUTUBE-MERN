@@ -8,6 +8,8 @@ import {
   createChannel,
   customizeChannel,
   getSubscribedContentData,
+  addHistory,
+  getHistory,
 } from "../controllers/user.controller.js";
 import uploads from "../middlewares/multer.js";
 
@@ -40,5 +42,7 @@ userRouter.post(
   customizeChannel
 );
 userRouter.post("/toggle-subscribers", protectedRoute, toggleSubscribers);
+userRouter.post("/add-history", protectedRoute, addHistory);
+userRouter.get("/get-history", protectedRoute, getHistory);
 
 export default userRouter;

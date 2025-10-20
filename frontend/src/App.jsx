@@ -27,6 +27,8 @@ import SavedContent from "./pages/SavedContent";
 import SavedPlaylist from "./pages/SavedPlaylist";
 import { useSubscribedContentStore } from "./store/useSubscribedContentStore";
 import Subscriptions from "./pages/Subscriptions";
+import { useHistoryStore } from "./store/useHistoryStore";
+import History from "./pages/History";
 
 export const serverURL = "http://localhost:8000";
 
@@ -42,6 +44,7 @@ const App = () => {
   const { getUserChannel, getAllChannels } = useChannelStore();
   const { getAllVideos, getAllShorts } = useContentStore();
   const { getSubscribedContentData } = useSubscribedContentStore();
+  const { getHistory } = useHistoryStore();
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
@@ -49,6 +52,7 @@ const App = () => {
     getAllShorts();
     getAllChannels();
     getSubscribedContentData();
+    getHistory();
   }, [
     getCurrentLoggedInUser,
     getUserChannel,
@@ -56,6 +60,7 @@ const App = () => {
     getAllShorts,
     getAllChannels,
     getSubscribedContentData,
+    getHistory,
   ]);
   return (
     <>
@@ -177,6 +182,15 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<Subscriptions />}
+              />
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<History />}
               />
             }
           />

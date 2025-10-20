@@ -5,6 +5,7 @@ import { SiYoutubeshorts } from "react-icons/si";
 import ShortCard from "../components/ShortCard";
 import { GoVideo } from "react-icons/go";
 import VideoCard from "../components/VideoCard";
+import { ClipLoader } from "react-spinners";
 
 const getVideoDuration = (videoUrl, callback) => {
   const video = document.createElement("video");
@@ -25,6 +26,8 @@ const getVideoDuration = (videoUrl, callback) => {
 const SavedContent = () => {
   const [savedVideos, setSavedVideos] = useState([]);
   const [savedShorts, setSavedShorts] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   const [duration, setDuration] = useState({});
 
@@ -71,7 +74,16 @@ const SavedContent = () => {
     };
     fetchSavedVideos();
     fetchSavedShorts();
+    setLoading(false);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[80vh] text-white">
+        <ClipLoader color="#fff" size={40} />
+      </div>
+    );
+  }
 
   if (savedVideos.length === 0 && savedShorts.length === 0) {
     return (

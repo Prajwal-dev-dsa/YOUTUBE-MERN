@@ -106,6 +106,22 @@ const PlayVideo = () => {
     setIsSubscribed(channel.subscribers.includes(loggedInUserData._id));
   }, [channel, loggedInUserData]);
 
+  useEffect(() => {
+    const addHistory = async () => {
+      try {
+        const res = await axios.post(
+          `${serverURL}/api/user/add-history`,
+          { contentId: videoId, contentType: "Video" },
+          { withCredentials: true }
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (videoId) addHistory();
+  }, [videoId]);
+
   const suggestedVideos =
     videos?.filter((video) => video._id !== videoId).slice(0, 10) || [];
   const suggestedShorts = shorts?.slice(0, 10) || [];

@@ -98,6 +98,22 @@ const PlayShort = () => {
     return () => observer.disconnect();
   }, [shortList]);
 
+  useEffect(() => {
+    const addHistory = async () => {
+      try {
+        const res = await axios.post(
+          `${serverURL}/api/user/add-history`,
+          { contentId: shortId, contentType: "Short" },
+          { withCredentials: true }
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (shortId) addHistory();
+  }, [shortId]);
+
   const togglePauseOrPlay = (index) => {
     const video = shortRefs.current[index];
     if (video) {

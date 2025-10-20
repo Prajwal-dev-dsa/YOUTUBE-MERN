@@ -169,7 +169,10 @@ const Home = () => {
             text="History"
             open={sideBarOpen}
             selected={selectedItem === "History"}
-            onClick={() => setSelectedItem("History")}
+            onClick={() => {
+              setSelectedItem("History");
+              navigate("/history");
+            }}
           />
           <SideBarItem
             icon={<RiPlayList2Fill />}

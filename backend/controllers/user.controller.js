@@ -1,10 +1,11 @@
 import Channel from "../models/channel.model.js";
 import User from "../models/user.model.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
+import videoModel from "../models/video.model.js";
+import shortModel from "../models/short.model.js";
 
 export const getCurrentLoggedInUser = async (req, res) => {
   try {
-    console.log(req.user);
     return res.status(200).json(req.user);
   } catch (error) {
     console.log(error);
@@ -242,6 +243,79 @@ export const getSubscribedContentData = async (req, res) => {
     return res
       .status(200)
       .json({ subscribers, videos, shorts, playlists, communityPosts });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const addHistory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { contentId, contentType } = req.body;
+
+    if (!["Video", "Short"].includes(contentType)) {
+      return res.status(400).json({ message: "Invalid content type" });
+    }
+
+    let content;
+    if (contentType === "Video") {
+      content = await videoModel.findById(contentId);
+    } else if (contentType === "Short") {
+      content = await shortModel.findById(contentId);
+    } else {
+      return res.status(404).json({ message: "Content not found" });
+    }
+
+    // pull if previously watched
+    await User.findByIdAndUpdate(userId, {
+      $pull: {
+        history: {
+          contentId,
+          contentType,
+        },
+      },
+    });
+
+    // add again with fresh watchedAt
+    await User.findByIdAndUpdate(userId, {
+      $push: {
+        history: {
+          contentId,
+          contentType,
+          watchedAt: new Date(),
+        },
+      },
+    });
+    return res.status(200).json({ message: "History added successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getHistory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId)
+      .populate({
+        path: "history.contentId",
+        populate: {
+          path: "channel",
+          select: "name avatar",
+        },
+      })
+      .select("history");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const sortHistory = [...user.history].sort(
+      (a, b) => new Date(b.watchedAt) - new Date(a.watchedAt)
+    );
+    return res.status(200).json(sortHistory);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });

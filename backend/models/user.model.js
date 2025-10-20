@@ -22,6 +22,23 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Channel",
     },
+    history: [
+      {
+        contentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          refPath: "history.contentType",
+        },
+        contentType: {
+          type: String,
+          enum: ["Video", "Short"],
+          required: true,
+        },
+        watchedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     generateOtp: { type: String },
     otpExpires: { type: Date },
     isOtpVerified: { type: Boolean, default: false },

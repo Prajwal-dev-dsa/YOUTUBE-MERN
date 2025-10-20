@@ -48,6 +48,7 @@ const Shorts = () => {
   const shortRefs = useRef([]);
   const [watchedShorts, setWatchedShorts] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [activeIdx, setActiveIdx] = useState(0);
 
   useEffect(() => {
     if (!shorts) return;
@@ -61,6 +62,7 @@ const Shorts = () => {
         entries.forEach((entry) => {
           const index = Number(entry.target.dataset.index);
           const video = shortRefs.current[index];
+          setActiveIdx(index);
           if (video) {
             if (entry.isIntersecting) {
               video.muted = false;
@@ -87,6 +89,24 @@ const Shorts = () => {
     });
     return () => observer.disconnect();
   }, [shortList]);
+
+  useEffect(() => {
+    const addHistory = async () => {
+      try {
+        const shortId = shortList[activeIdx]?._id;
+        if (!shortId) return;
+        const res = await axios.post(
+          `${serverURL}/api/user/add-history`,
+          { contentId: shortId, contentType: "Short" },
+          { withCredentials: true }
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (shortList.length > 0) addHistory();
+  }, [shortList, activeIdx]);
 
   const togglePauseOrPlay = (index) => {
     const video = shortRefs.current[index];

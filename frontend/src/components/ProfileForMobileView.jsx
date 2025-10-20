@@ -120,7 +120,11 @@ const ProfileForMobileView = () => {
 
       {/* Proile menu items */}
       <div className="flex flex-col mt-[2vh]">
-        <ProfileMenuItem icon={<FaHistory />} text="History" />
+        <ProfileMenuItem
+          icon={<FaHistory />}
+          text="History"
+          onClick={() => navigate("/history")}
+        />
         <ProfileMenuItem
           icon={<FaList />}
           onClick={() => navigate("/saved-playlist")}
@@ -140,6 +144,7 @@ const ProfileForMobileView = () => {
         <ProfileMenuItem
           icon={<MdOutlineSubscriptions />}
           text="Subscriptions"
+          onClick={() => navigate("/subscriptions")}
         />
       </div>
     </div>
