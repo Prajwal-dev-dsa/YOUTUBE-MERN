@@ -31,6 +31,7 @@ import axios from "axios";
 import { serverURL } from "../App";
 import { ClipLoader } from "react-spinners";
 import SearchResults from "./SearchResults";
+import FilterResults from "./FilterResults";
 
 const Home = () => {
   const { subscribedChannels } = useSubscribedContentStore();
@@ -53,6 +54,9 @@ const Home = () => {
   const [input, setInput] = useState("");
   const [searchData, setSearchData] = useState("");
   const [loading, setLoading] = useState(false);
+  const [filterData, setFilterData] = useState("");
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const recoginitionRef = useRef();
 
@@ -142,8 +146,54 @@ const Home = () => {
       setLoading(false);
     }
   };
+
+  const handleCategoryFilter = async (category) => {
+    setFilterLoading(true);
+    try {
+      const result = await axios.post(
+        `${serverURL}/api/content/filter-category`,
+        { input: category },
+        { withCredentials: true }
+      );
+
+      const { videos = [], shorts = [], channels = [] } = result.data;
+
+      let channelVideos = [];
+      let channelShorts = [];
+
+      channels.forEach((channel) => {
+        if (channel.videos?.length) channelVideos.push(...channel.videos);
+        if (channel.shorts?.length) channelShorts.push(...channel.shorts);
+      });
+
+      setFilterData({
+        ...result.data,
+        videos: [...videos, ...channelVideos],
+        shorts: [...shorts, ...channelShorts],
+      });
+      navigate("/");
+
+      if (
+        videos.length > 0 ||
+        shorts.length > 0 ||
+        channelVideos.length > 0 ||
+        channelShorts.length > 0
+      ) {
+        speak(`Here are the ${category} results`);
+      } else {
+        speak("No results found");
+      }
+    } catch (error) {
+      console.log(error.message);
+      showCustomAlert("Something went wrong! Please try again.");
+    } finally {
+      setFilterLoading(false);
+    }
+  };
+
   // categories to be displayed on the home screen
   const categories = [
+    "All",
     "Music",
     "Gaming",
     "News",
@@ -164,6 +214,36 @@ const Home = () => {
     "Cooking",
     "Dance",
     "Fashion",
+    "Travel",
+    "Beauty",
+    "DIY & Crafts",
+    "Animals & Pets",
+    "Automotive",
+    "Animation",
+    "Documentary",
+    "History",
+    "Finance & Business",
+    "Fitness",
+    "How-to & Style",
+    "People & Blogs",
+    "Trailers",
+    "ASMR",
+    "Podcasts",
+    "Reviews",
+    "Tutorials",
+    "Unboxing",
+    "Challenges",
+    "Pranks",
+    "Family",
+    "Nature & Outdoors",
+    "Photography",
+    "Filmmaking",
+    "Real Estate",
+    "Spirituality",
+    "Motivation",
+    "Coding & Programming",
+    "Web Development",
+    "Mobile Development",
   ];
   return (
     <div className="bg-[#0f0f0f] min-h-screen relative text-white">
@@ -483,7 +563,15 @@ const Home = () => {
             {categories.map((category, idx) => (
               <button
                 key={idx}
-                className="bg-[#272727] px-4 py-1.5 rounded-md cursor-pointer hover:bg-zinc-700 transition duration-300 ease-in-out text-sm whitespace-nowrap"
+                onClick={() => {
+                  handleCategoryFilter(category);
+                  setSelectedCategory(category);
+                }}
+                className={`px-4 py-1.5 rounded-lg cursor-pointer transition duration-200 ease-in-out text-sm whitespace-nowrap ${
+                  selectedCategory === category
+                    ? "bg-white text-black"
+                    : "bg-[#272727] text-white hover:bg-neutral-700"
+                }`}
               >
                 {category}
               </button>
@@ -493,6 +581,9 @@ const Home = () => {
         <div>
           {location.pathname === "/" && searchData && (
             <SearchResults searchResults={searchData} />
+          )}
+          {location.pathname === "/" && filterData && (
+            <FilterResults filterResults={filterData} />
           )}
           {location.pathname === "/" && <DisplayVideosInHomePage />}
           {location.pathname === "/" && <DisplayShortsInHomePage />}
