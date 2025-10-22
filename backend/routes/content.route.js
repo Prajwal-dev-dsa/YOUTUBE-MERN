@@ -37,6 +37,7 @@ import {
   toggleLikesOfPost,
   addReplyToPostComment,
 } from "../controllers/post.controller.js";
+import { searchWithAI } from "../controllers/ai.controller.js";
 
 const contentRouter = express.Router();
 
@@ -157,5 +158,8 @@ contentRouter.post(
   addReplyToPostComment
 );
 // posts
+
+contentRouter.post("/search", protectedRoute, searchWithAI);
+// AI
 
 export default contentRouter;
