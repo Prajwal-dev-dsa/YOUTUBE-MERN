@@ -321,3 +321,101 @@ export const getHistory = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getRecommendedContent = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+    // get user with history
+    const user = await User.findById(userId)
+      .populate("history.contentId")
+      .lean();
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // collect keywords from history
+    const historyKeywords = user.history.map(
+      (item) => item.contentId?.title || ""
+    );
+
+    // collect liked & saved content
+    const likedVideos = await videoModel.find({ likes: userId });
+    const likedShorts = await shortModel.find({ likes: userId });
+    const savedShorts = await shortModel.find({ savedBy: userId });
+    const savedVideos = await videoModel.find({ savedBy: userId });
+
+    const likedSavedKeywords = [
+      ...likedVideos.map((item) => item.title),
+      ...likedShorts.map((item) => item.title),
+      ...savedShorts.map((item) => item.title),
+      ...savedVideos.map((item) => item.title),
+    ];
+
+    // merge all keywords
+    const allKeywords = [...historyKeywords, ...likedSavedKeywords]
+      .filter(Boolean)
+      .map((keyword) => keyword.split(" "))
+      .flat();
+
+    // build regex conditions
+    const videoConditions = [];
+    const shortConditions = [];
+
+    allKeywords.forEach((keyword) => {
+      videoConditions.push(
+        { title: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+        { tags: { $regex: keyword, $options: "i" } }
+      );
+      shortConditions.push(
+        { title: { $regex: keyword, $options: "i" } },
+        { tags: { $regex: keyword, $options: "i" } }
+      );
+    });
+
+    // recommended content
+    const recommendedVideos = await videoModel
+      .find({
+        $or: videoConditions,
+      })
+      .populate("channel comments.author comments.replies.author");
+
+    const recommendedShorts = await shortModel
+      .find({
+        $or: shortConditions,
+      })
+      .populate("channel", "name avatar")
+      .populate("likes", "userName photoUrl");
+
+    // remaining content
+
+    const recommendedVideosIds = recommendedVideos.map((item) => item._id);
+    const recommendedShortsIds = recommendedShorts.map((item) => item._id);
+
+    const remainingVideos = await videoModel
+      .find({
+        _id: { $nin: recommendedVideosIds },
+      })
+      .sort({ createdAt: -1 })
+      .populate("channel");
+
+    const remainingShorts = await shortModel
+      .find({
+        _id: { $nin: recommendedShortsIds },
+      })
+      .sort({ createdAt: -1 })
+      .populate("channel");
+
+    return res.status(200).json({
+      recommendedVideos,
+      recommendedShorts,
+      remainingVideos,
+      remainingShorts,
+      usedKeywords: allKeywords,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

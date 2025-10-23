@@ -32,6 +32,7 @@ import { serverURL } from "../App";
 import { ClipLoader } from "react-spinners";
 import SearchResults from "./SearchResults";
 import FilterResults from "./FilterResults";
+import RecommendedContent from "./RecommendedContent";
 
 const Home = () => {
   const { subscribedChannels } = useSubscribedContentStore();
@@ -585,8 +586,15 @@ const Home = () => {
           {location.pathname === "/" && filterData && (
             <FilterResults filterResults={filterData} />
           )}
-          {location.pathname === "/" && <DisplayVideosInHomePage />}
-          {location.pathname === "/" && <DisplayShortsInHomePage />}
+          {location.pathname === "/" && loggedInUserData && (
+            <RecommendedContent />
+          )}
+          {location.pathname === "/" && !loggedInUserData && (
+            <DisplayVideosInHomePage />
+          )}
+          {location.pathname === "/" && !loggedInUserData && (
+            <DisplayShortsInHomePage />
+          )}
         </div>
         <div className="mt-17">
           <Outlet />

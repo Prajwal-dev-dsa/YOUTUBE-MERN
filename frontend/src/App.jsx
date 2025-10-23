@@ -29,6 +29,7 @@ import { useSubscribedContentStore } from "./store/useSubscribedContentStore";
 import Subscriptions from "./pages/Subscriptions";
 import { useHistoryStore } from "./store/useHistoryStore";
 import History from "./pages/History";
+import { useRecommendedStore } from "./store/useRecommendedStore";
 
 export const serverURL = "http://localhost:8000";
 
@@ -45,6 +46,7 @@ const App = () => {
   const { getAllVideos, getAllShorts } = useContentStore();
   const { getSubscribedContentData } = useSubscribedContentStore();
   const { getHistory } = useHistoryStore();
+  const { getRecommendedContent } = useRecommendedStore();
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
@@ -53,6 +55,7 @@ const App = () => {
     getAllChannels();
     getSubscribedContentData();
     getHistory();
+    getRecommendedContent();
   }, [
     getCurrentLoggedInUser,
     getUserChannel,
@@ -61,6 +64,7 @@ const App = () => {
     getAllChannels,
     getSubscribedContentData,
     getHistory,
+    getRecommendedContent,
   ]);
   return (
     <>
