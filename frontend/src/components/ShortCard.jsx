@@ -30,7 +30,14 @@ const ShortCard = ({ shortUrl, title, channelName, avatar, views, id }) => {
           />
           <span className="text-xs text-gray-400">{channelName}</span>
         </div>
-        <span className="text-xs text-gray-400">{views} views</span>
+        <span className="text-xs text-gray-400">
+          {Number(views) >= 1_000_000
+            ? `${Number(views) / 1_000_000}M views`
+            : Number(views) >= 1_000
+            ? `${Number(views) / 1_000}K views`
+            : views}{" "}
+          views
+        </span>
       </div>
     </div>
   );

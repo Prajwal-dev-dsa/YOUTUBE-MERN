@@ -40,7 +40,12 @@ const VideoCard = ({
           </h3>
           <p className="text-gray-400 text-xs mt-1">{channelName}</p>
           <p className="text-gray-400 text-xs">
-            {views} views {timeAgo && `• ${timeAgo}`}
+            {Number(views) >= 1_000_000
+              ? `${Number(views) / 1_000_000}M views`
+              : Number(views) >= 1_000
+              ? `${Number(views) / 1_000}K views`
+              : views}{" "}
+            views {timeAgo && `• ${timeAgo}`}
           </p>
         </div>
       </Link>
@@ -73,7 +78,12 @@ const VideoCard = ({
           </h3>
           <p className="text-gray-400 text-sm mt-1">{channelName}</p>
           <p className="text-gray-400 text-xs">
-            {views} views {timeAgo && `• ${timeAgo}`}
+            {Number(views) >= 1_000_000
+              ? `${Number(views) / 1_000_000}M views`
+              : Number(views) >= 1_000
+              ? `${Number(views) / 1_000}K views`
+              : views}{" "}
+            views {timeAgo && `• ${timeAgo}`}
           </p>
         </div>
       </div>

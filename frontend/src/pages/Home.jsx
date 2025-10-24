@@ -41,7 +41,7 @@ const Home = () => {
 
   const { loggedInUserData } = useUserStore();
 
-  const [sideBarOpen, setSideBarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Home"); // for desktop
   const [activeItem, setActiveItem] = useState("Home"); // for mobile
 
@@ -305,7 +305,7 @@ const Home = () => {
           <div className="flex items-center gap-5">
             <button
               className="hidden md:flex text-xl bg-[#272727] p-2 rounded-full cursor-pointer hover:bg-zinc-700 transition duration-300 ease-in-out"
-              onClick={() => setSideBarOpen(!sideBarOpen)}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               <RxHamburgerMenu color="white" size={20} />
             </button>
@@ -380,14 +380,14 @@ const Home = () => {
       {/* Sidebar */}
       <aside
         className={`bg-[#0f0f0f] border-r border-gray-800 transition-all duration-300 fixed top-[60px] bottom-0 left-0 z-40 ${
-          sideBarOpen ? "w-64" : "w-20"
+          sidebarOpen ? "w-64" : "w-20"
         } hidden md:flex flex-col overflow-y-auto`}
       >
         <nav className="space-y-2 mt-5">
           <SideBarItem
             icon={<FaHome />}
             text="Home"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Home"}
             onClick={() => {
               setSelectedItem("Home");
@@ -397,7 +397,7 @@ const Home = () => {
           <SideBarItem
             icon={<SiYoutubeshorts />}
             text="Shorts"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Shorts"}
             onClick={() => {
               setSelectedItem("Shorts");
@@ -407,7 +407,7 @@ const Home = () => {
           <SideBarItem
             icon={<MdOutlineSubscriptions />}
             text="Subscriptions"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Subscriptions"}
             onClick={() => {
               setSelectedItem("Subscriptions");
@@ -416,12 +416,12 @@ const Home = () => {
           />
         </nav>
         <hr className="my-3 border-gray-800" />
-        {sideBarOpen && <p className="text-md text-gray-400 px-4">You</p>}
+        {sidebarOpen && <p className="text-md text-gray-400 px-4">You</p>}
         <nav className="space-y-2 mt-4">
           <SideBarItem
             icon={<FaHistory />}
             text="History"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "History"}
             onClick={() => {
               setSelectedItem("History");
@@ -431,7 +431,7 @@ const Home = () => {
           <SideBarItem
             icon={<RiPlayList2Fill />}
             text="Playlist"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Playlist"}
             onClick={() => {
               setSelectedItem("Playlist");
@@ -441,7 +441,7 @@ const Home = () => {
           <SideBarItem
             icon={<GoVideo />}
             text="Saved Videos"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Saved Videos"}
             onClick={() => {
               setSelectedItem("Saved Videos");
@@ -451,7 +451,7 @@ const Home = () => {
           <SideBarItem
             icon={<FaThumbsUp />}
             text="Liked Videos"
-            open={sideBarOpen}
+            open={sidebarOpen}
             selected={selectedItem === "Liked Videos"}
             onClick={() => {
               setSelectedItem("Liked Videos");
@@ -460,7 +460,7 @@ const Home = () => {
           />
         </nav>
         <hr className="my-3 border-gray-800" />
-        {sideBarOpen && (
+        {sidebarOpen && (
           <p className="text-md text-gray-400 px-4">Subscriptions</p>
         )}
         <div className="space-y-2 mt-4">
@@ -472,7 +472,7 @@ const Home = () => {
                 navigate(`/channel-page/${channel?._id}`);
               }}
               className={`flex items-center w-full text-left bg-[#121212] cursor-pointer p-2 rounded-lg transition ${
-                SidebarOpen ? "gap-3 justify-start" : "justify-center"
+                sidebarOpen ? "gap-3 justify-start" : "justify-center"
               } ${
                 selectedItem === channel?._id
                   ? "bg-[#272727]"
@@ -484,7 +484,7 @@ const Home = () => {
                 className="w-5 h-5 object-cover rounded-full"
                 alt=""
               />
-              {SidebarOpen && (
+              {sidebarOpen && (
                 <span className="text-sm truncate">{channel?.name}</span>
               )}
             </button>
@@ -556,7 +556,7 @@ const Home = () => {
       {/* Main Content */}
       <main
         className={`overflow-y-auto p-4 flex flex-col pb-16 transition-all duration-300 ${
-          sideBarOpen ? "md:ml-64" : "md:ml-20"
+          sidebarOpen ? "md:ml-64" : "md:ml-20"
         }`}
       >
         {location.pathname === "/" && (

@@ -11,11 +11,16 @@ import {
   addReplyInTheComment,
   getUserLikedVideos,
   getUserSavedVideos,
+  fetchVideo,
+  updateVideo,
+  deleteVideo,
 } from "../controllers/video.controller.js";
 import {
   addCommentsInTheShort,
   addReplyInTheCommentOfTheShort,
   createShort,
+  deleteShort,
+  fetchShort,
   getAllShorts,
   getUserLikedShorts,
   getUserSavedShorts,
@@ -23,12 +28,16 @@ import {
   toggleDislikesOfShort,
   toggleLikesOfShort,
   toggleSavedByOfShort,
+  updateShort,
 } from "../controllers/short.controller.js";
 import uploads from "../middlewares/multer.js";
 import {
   createPlaylist,
+  deletePlaylist,
+  fetchPlaylist,
   getAllSavedPlaylists,
   toggleSavedByPlaylist,
+  updatePlaylist,
 } from "../controllers/playlist.controller.js";
 import {
   addCommentsInThePost,
@@ -36,11 +45,15 @@ import {
   getAllPosts,
   toggleLikesOfPost,
   addReplyToPostComment,
+  updatePost,
+  deletePost,
+  getPostById,
 } from "../controllers/post.controller.js";
 import {
   filterCategoryWithAI,
   searchWithAI,
 } from "../controllers/ai.controller.js";
+import upload from "../middlewares/multer.js";
 
 const contentRouter = express.Router();
 
@@ -86,6 +99,14 @@ contentRouter.post(
 );
 contentRouter.get("/getUserLikedVideos", protectedRoute, getUserLikedVideos);
 contentRouter.get("/getUserSavedVideos", protectedRoute, getUserSavedVideos);
+contentRouter.get("/fetchVideo/:videoId", protectedRoute, fetchVideo);
+contentRouter.put(
+  "/updateVideo/:videoId",
+  protectedRoute,
+  upload.single("thumbnail"),
+  updateVideo
+);
+contentRouter.delete("/deleteVideo/:videoId", protectedRoute, deleteVideo);
 // videos
 
 contentRouter.post(
@@ -127,6 +148,10 @@ contentRouter.post(
 );
 contentRouter.get("/getUserLikedShorts", protectedRoute, getUserLikedShorts);
 contentRouter.get("/getUserSavedShorts", protectedRoute, getUserSavedShorts);
+contentRouter.get("/fetchShort/:shortId", protectedRoute, fetchShort);
+contentRouter.put("/updateShort/:shortId", protectedRoute, updateShort);
+contentRouter.delete("/deleteShort/:shortId", protectedRoute, deleteShort);
+
 // shorts
 
 contentRouter.get(
@@ -139,6 +164,17 @@ contentRouter.put(
   "/playlist/toggleSavedBy",
   protectedRoute,
   toggleSavedByPlaylist
+);
+contentRouter.get("/fetchPlaylist/:playlistId", protectedRoute, fetchPlaylist);
+contentRouter.put(
+  "/updatePlaylist/:playlistId",
+  protectedRoute,
+  updatePlaylist
+);
+contentRouter.delete(
+  "/deletePlaylist/:playlistId",
+  protectedRoute,
+  deletePlaylist
 );
 // playlists
 
@@ -160,6 +196,9 @@ contentRouter.post(
   protectedRoute,
   addReplyToPostComment
 );
+contentRouter.get("/fetchPost/:postId", protectedRoute, getPostById);
+contentRouter.put("/updatePost/:postId", protectedRoute, updatePost);
+contentRouter.delete("/deletePost/:postId", protectedRoute, deletePost);
 // posts
 
 contentRouter.post("/search", protectedRoute, searchWithAI);

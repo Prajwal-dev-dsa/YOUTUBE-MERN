@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useChannelStore } from "../store/useChannelStore";
 import { FaEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const Content = () => {
+  const navigate = useNavigate();
   const { channelData } = useChannelStore();
   const [activeTab, setActiveTab] = useState("Videos");
   return (
@@ -56,7 +57,14 @@ const Content = () => {
                       <td className="p-3 text-sm">{video.title}</td>
                       <td className="p-3 text-sm">{video.views}</td>
                       <td className="p-3">
-                        <FaEdit className="cursor-pointer hover:text-red-500" />
+                        <FaEdit
+                          className="cursor-pointer hover:text-red-500"
+                          onClick={() =>
+                            navigate(
+                              `/yt-studio/content/update-video/${video._id}`
+                            )
+                          }
+                        />
                       </td>
                     </tr>
                   ))}
@@ -81,7 +89,12 @@ const Content = () => {
                   </div>
                   <div className="px-3 py-2 border-t border-gray-700 flex items-center justify-between text-xs text-gray-400">
                     <span>{video.views} views</span>
-                    <FaEdit className="cursor-pointer hover:text-red-500" />
+                    <FaEdit
+                      className="cursor-pointer hover:text-red-500"
+                      onClick={() =>
+                        navigate(`/yt-studio/content/update-video/${video._id}`)
+                      }
+                    />
                   </div>
                 </div>
               ))}
@@ -118,7 +131,14 @@ const Content = () => {
                       <td className="p-3 text-sm">{short.title}</td>
                       <td className="p-3 text-sm">{short.views}</td>
                       <td className="p-3">
-                        <FaEdit className="cursor-pointer hover:text-red-500" />
+                        <FaEdit
+                          onClick={() =>
+                            navigate(
+                              `/yt-studio/content/update-short/${short._id}`
+                            )
+                          }
+                          className="cursor-pointer hover:text-red-500"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -145,7 +165,12 @@ const Content = () => {
                   </div>
                   <div className="px-3 py-2 border-t border-gray-700 flex items-center justify-between text-xs text-gray-400">
                     <span>{short.views} views</span>
-                    <FaEdit className="cursor-pointer hover:text-red-500" />
+                    <FaEdit
+                      onClick={() =>
+                        navigate(`/yt-studio/content/update-short/${short._id}`)
+                      }
+                      className="cursor-pointer hover:text-red-500"
+                    />
                   </div>
                 </div>
               ))}
@@ -183,7 +208,14 @@ const Content = () => {
                         {playlist?.videos?.length}
                       </td>
                       <td className="p-3">
-                        <FaEdit className="cursor-pointer hover:text-red-500" />
+                        <FaEdit
+                          onClick={() =>
+                            navigate(
+                              `/yt-studio/content/update-playlist/${playlist._id}`
+                            )
+                          }
+                          className="cursor-pointer hover:text-red-500"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -208,7 +240,14 @@ const Content = () => {
                   </div>
                   <div className="px-3 py-2 border-t border-gray-700 flex items-center justify-between text-xs text-gray-400">
                     <span>{playlist?.videos?.length} videos</span>
-                    <FaEdit className="cursor-pointer hover:text-red-500" />
+                    <FaEdit
+                      onClick={() =>
+                        navigate(
+                          `/yt-studio/content/update-playlist/${playlist._id}`
+                        )
+                      }
+                      className="cursor-pointer hover:text-red-500"
+                    />
                   </div>
                 </div>
               ))}
@@ -225,7 +264,7 @@ const Content = () => {
                     <th className="p-3 text-left">Post</th>
                     <th className="p-3 text-left">Title</th>
                     <th className="p-3 text-left">Created At</th>
-                    <th className="p-3 text-left">Delete</th>
+                    <th className="p-3 text-left">Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -246,7 +285,12 @@ const Content = () => {
                         {new Date(post?.createdAt).toLocaleString()}
                       </td>
                       <td className="p-3">
-                        <MdDelete
+                        <FaEdit
+                          onClick={() =>
+                            navigate(
+                              `/yt-studio/content/update-post/${post._id}`
+                            )
+                          }
                           className="cursor-pointer hover:text-red-500"
                           size={20}
                         />
@@ -274,7 +318,10 @@ const Content = () => {
                   </div>
                   <div className="px-3 py-2 border-t border-gray-700 flex items-center justify-between text-xs text-gray-400">
                     <span>{new Date(post?.createdAt).toLocaleString()}</span>
-                    <MdDelete
+                    <FaEdit
+                      onClick={() =>
+                        navigate(`/yt-studio/content/update-post/${post._id}`)
+                      }
                       className="cursor-pointer hover:text-red-500"
                       size={20}
                     />

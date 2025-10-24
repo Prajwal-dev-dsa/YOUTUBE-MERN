@@ -120,3 +120,53 @@ export const addReplyToPostComment = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getPostById = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await postModel.findById(postId).populate("channel");
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    return res.status(200).json(post);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { content } = req.body;
+    const post = await postModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    if (content !== undefined) post.content = content;
+    await post.save();
+    const populatedPost = await populatePost(postModel.findById(postId));
+    return res.status(200).json(populatedPost);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const post = await postModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    await postModel.findByIdAndDelete(postId);
+    await channelModel.findByIdAndUpdate(post.channel, {
+      $pull: { communityPosts: postId },
+    });
+    return res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

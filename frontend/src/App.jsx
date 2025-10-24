@@ -35,6 +35,10 @@ import Dashboard from "./components/Dashboard";
 import Analytics from "./components/Analytics";
 import Content from "./components/Content";
 import Revenue from "./components/Revenue";
+import UpdateVideo from "./pages/Videos/UpdateVideo";
+import UpdateShort from "./pages/Shorts/UpdateShort";
+import UpdatePlaylist from "./pages/Playlists/UpdatePlaylist";
+import UpdatePost from "./pages/Posts/UpdatePost";
 
 export const serverURL = "http://localhost:8000";
 
@@ -261,6 +265,42 @@ const App = () => {
               <ProtectedRoute
                 loggedInUserData={loggedInUserData}
                 children={<Revenue />}
+              />
+            }
+          />
+          <Route
+            path="content/update-video/:videoId"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<UpdateVideo />}
+              />
+            }
+          />
+          <Route
+            path="content/update-short/:shortId"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<UpdateShort />}
+              />
+            }
+          />
+          <Route
+            path="content/update-playlist/:playlistId"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<UpdatePlaylist />}
+              />
+            }
+          />
+          <Route
+            path="content/update-post/:postId"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<UpdatePost />}
               />
             }
           />

@@ -254,3 +254,74 @@ export const getUserSavedVideos = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const fetchVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const video = await videoModel
+      .findById(videoId)
+      .populate("channel", "name avatar")
+      .populate("likes", "username photoUrl");
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    return res.status(200).json(video);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const { title, description, tags } = req.body;
+    const video = await videoModel.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    if (title) video.title = title;
+    if (description) video.description = description;
+    if (tags) {
+      try {
+        const parsedTagsInArray = JSON.parse(tags);
+        video.tags = parsedTagsInArray;
+      } catch (error) {
+        video.tags = [];
+        console.log(error);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
+    }
+    if (req.file) {
+      const thumbnailPath = req.file.path;
+      const uploadThumbnail = await uploadOnCloudinary(thumbnailPath);
+      const thumbnailUrl = uploadThumbnail.secure_url;
+      video.thumbnail = thumbnailUrl;
+    }
+    await video.save();
+    return res.status(200).json(video);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const deleteVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const video = await videoModel.findById(videoId);
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    await Channel.findByIdAndUpdate(video.channel, {
+      $pull: {
+        videos: video._id,
+      },
+    });
+    await videoModel.findByIdAndDelete(videoId);
+    return res.status(200).json({ message: "Video deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
