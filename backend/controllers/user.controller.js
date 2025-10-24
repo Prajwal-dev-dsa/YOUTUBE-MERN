@@ -112,7 +112,26 @@ export const getUserChannel = async (req, res) => {
       .populate("owner")
       .populate("shorts")
       .populate("videos")
-      .populate("playlists");
+      .populate("playlists")
+      .populate("subscribers")
+      .populate({
+        path: "communityPosts",
+        populate: {
+          path: "channel",
+          model: "Channel",
+        },
+      })
+      .populate({
+        path: "playlists",
+        populate: {
+          path: "videos",
+          model: "Video",
+          populate: {
+            path: "channel",
+            model: "Channel",
+          },
+        },
+      });
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
     }

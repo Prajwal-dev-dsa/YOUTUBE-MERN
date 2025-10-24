@@ -14,7 +14,12 @@ import { serverURL } from "../App";
 
 const Profile = ({ setToggle }) => {
   const navigate = useNavigate();
-  const { loggedInUserData, logout, setLoggedInUserData, getCurrentLoggedInUser } = useUserStore(); // getting current loggedIn user's data
+  const {
+    loggedInUserData,
+    logout,
+    setLoggedInUserData,
+    getCurrentLoggedInUser,
+  } = useUserStore();
 
   const logoutHandler = async () => {
     await logout();
@@ -43,8 +48,7 @@ const Profile = ({ setToggle }) => {
     } catch (error) {
       console.log(error);
       showCustomAlert("Login failed");
-    }
-    finally{
+    } finally {
       setToggle(false);
     }
   };
@@ -87,19 +91,31 @@ const Profile = ({ setToggle }) => {
             <FcGoogle className="text-2xl" /> Google Sign In
           </button>
           <button
-            onClick={() => {navigate("/register"); setToggle(false);}}
+            onClick={() => {
+              navigate("/register");
+              setToggle(false);
+            }}
             className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
           >
             <TiUserAddOutline className="text-2xl" /> Create New Account
           </button>
           <button
-            onClick={() => {navigate("/login"); setToggle(false);}}
+            onClick={() => {
+              navigate("/login");
+              setToggle(false);
+            }}
             className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
           >
             <MdOutlineSwitchAccount className="text-2xl" /> Switch Account
           </button>
           {loggedInUserData?.channel && (
-            <button className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300">
+            <button
+              onClick={() => {
+                navigate("/yt-studio/dashboard");
+                setToggle(false);
+              }}
+              className="flex items-center cursor-pointer gap-3 px-4 py-2 hover:bg-zinc-700 transition duration-300"
+            >
               <SiYoutubestudio className="text-2xl" /> YouTube Studio
             </button>
           )}

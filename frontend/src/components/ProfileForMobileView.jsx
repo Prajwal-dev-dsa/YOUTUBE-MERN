@@ -22,7 +22,7 @@ const ProfileForMobileView = () => {
     logout,
     setLoggedInUserData,
     getCurrentLoggedInUser,
-  } = useUserStore(); // getting current loggedIn user's data
+  } = useUserStore();
 
   const logoutHandler = async () => {
     await logout();
@@ -140,7 +140,11 @@ const ProfileForMobileView = () => {
           onClick={() => navigate("/saved-content")}
           text="Saved Videos"
         />
-        <ProfileMenuItem icon={<SiYoutubestudio />} text="YouTube Studio" />
+        <ProfileMenuItem
+          onClick={() => navigate("/yt-studio/dashboard")}
+          icon={<SiYoutubestudio />}
+          text="YouTube Studio"
+        />
         <ProfileMenuItem
           icon={<MdOutlineSubscriptions />}
           text="Subscriptions"

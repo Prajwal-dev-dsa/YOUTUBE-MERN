@@ -30,6 +30,11 @@ import Subscriptions from "./pages/Subscriptions";
 import { useHistoryStore } from "./store/useHistoryStore";
 import History from "./pages/History";
 import { useRecommendedStore } from "./store/useRecommendedStore";
+import YtStudio from "./pages/YtStudio";
+import Dashboard from "./components/Dashboard";
+import Analytics from "./components/Analytics";
+import Content from "./components/Content";
+import Revenue from "./components/Revenue";
 
 export const serverURL = "http://localhost:8000";
 
@@ -213,6 +218,53 @@ const App = () => {
         />
         <Route path="/play-video/:videoId" element={<PlayVideo />} />
         <Route path="/play-short/:shortId" element={<PlayShort />} />
+
+        <Route
+          path="/yt-studio"
+          element={
+            <ProtectedRoute
+              loggedInUserData={loggedInUserData}
+              children={<YtStudio />}
+            />
+          }
+        >
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Dashboard />}
+              />
+            }
+          />
+          <Route
+            path="analytics"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Analytics />}
+              />
+            }
+          />
+          <Route
+            path="content"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Content />}
+              />
+            }
+          />
+          <Route
+            path="revenue"
+            element={
+              <ProtectedRoute
+                loggedInUserData={loggedInUserData}
+                children={<Revenue />}
+              />
+            }
+          />
+        </Route>
       </Routes>
     </>
   );

@@ -52,7 +52,10 @@ const ViewChannel = () => {
             >
               Customize Channel
             </button>
-            <button className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-full hover:bg-gray-700 transition-colors">
+            <button
+              onClick={() => navigate("/yt-studio/dashboard")}
+              className="px-4 py-2 bg-gray-600 cursor-pointer text-white rounded-full hover:bg-gray-700 transition-colors"
+            >
               Manage Videos
             </button>
           </div>
