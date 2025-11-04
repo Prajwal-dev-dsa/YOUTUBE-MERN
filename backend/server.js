@@ -9,6 +9,7 @@ import connectDB from "./config/dB.js";
 import authRouter from "./routes/auth.route.js";
 import userRouter from "./routes/user.route.js";
 import contentRouter from "./routes/content.route.js";
+import rateLimiter from "./middlewares/rateLimiter.js"
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ app.use(
 );
 
 app.use(morgan("dev")); // log all the requests to the console
+
+app.use(rateLimiter); //use before defining routes to apply rate limiting
 
 // routes
 app.use("/api/auth", authRouter);

@@ -71,7 +71,7 @@ const Dashboard = () => {
           )}
           <div className="space-y-4">
             {(channelData?.videos)
-              .slice()
+              ?.slice()
               .reverse()
               .slice(0, 5)
               .map((video, idx) => (
@@ -91,7 +91,7 @@ const Dashboard = () => {
           )}
           <div className="space-y-4">
             {(channelData?.shorts)
-              .slice()
+              ?.slice()
               .reverse()
               .slice(0, 5)
               .map((short, idx) => (

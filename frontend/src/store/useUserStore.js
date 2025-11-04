@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../api/axiosConfig";
 import { serverURL } from "../App";
 
 export const useUserStore = create((set, get) => ({
   loggedInUserData: null,
   getCurrentLoggedInUser: async () => {
     try {
-      const res = await axios.get(`${serverURL}/api/user`, {
+      const res = await api.get(`${serverURL}/api/user`, {
         withCredentials: true,
       });
       set({ loggedInUserData: res.data });
@@ -17,7 +17,7 @@ export const useUserStore = create((set, get) => ({
   },
   logout: async () => {
     try {
-      await axios.post(`${serverURL}/api/auth/logout`, null, {
+      await api.post(`${serverURL}/api/auth/logout`, null, {
         withCredentials: true,
       });
       set({ loggedInUserData: null });

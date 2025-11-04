@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../api/axiosConfig";
 import { serverURL } from "../App";
 
 export const useHistoryStore = create((set, get) => ({
@@ -9,7 +9,7 @@ export const useHistoryStore = create((set, get) => ({
   setShortHistory: (history) => set({ history }),
   getHistory: async () => {
     try {
-      const res = await axios.get(`${serverURL}/api/user/get-history`, {
+      const res = await api.get(`${serverURL}/api/user/get-history`, {
         withCredentials: true,
       });
       const history = res.data;

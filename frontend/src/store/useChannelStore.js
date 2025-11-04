@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../api/axiosConfig";
 import { serverURL } from "../App";
 
 export const useChannelStore = create((set, get) => ({
@@ -8,7 +8,7 @@ export const useChannelStore = create((set, get) => ({
   setChannelData: (data) => set({ channelData: data }),
   getUserChannel: async () => {
     try {
-      const res = await axios.get(`${serverURL}/api/user/get-channel`, {
+      const res = await api.get(`${serverURL}/api/user/get-channel`, {
         withCredentials: true,
       });
       set({ channelData: res.data });
@@ -20,7 +20,7 @@ export const useChannelStore = create((set, get) => ({
   setAllChannelsData: (data) => set({ allChannelsData: data }),
   getAllChannels: async () => {
     try {
-      const res = await axios.get(`${serverURL}/api/user/get-all-channels`, {
+      const res = await api.get(`${serverURL}/api/user/get-all-channels`, {
         withCredentials: true,
       });
       set({ allChannelsData: res.data });

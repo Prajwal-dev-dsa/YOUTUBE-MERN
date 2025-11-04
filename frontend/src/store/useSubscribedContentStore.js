@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import api from "../api/axiosConfig";
 import { serverURL } from "../App";
 
 export const useSubscribedContentStore = create((set, get) => ({
@@ -19,7 +19,7 @@ export const useSubscribedContentStore = create((set, get) => ({
 
   getSubscribedContentData: async () => {
     try {
-      const res = await axios.get(
+      const res = await api.get(
         `${serverURL}/api/user/get-subscribed-content-data`,
         {
           withCredentials: true,

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -39,6 +39,8 @@ import UpdateVideo from "./pages/Videos/UpdateVideo";
 import UpdateShort from "./pages/Shorts/UpdateShort";
 import UpdatePlaylist from "./pages/Playlists/UpdatePlaylist";
 import UpdatePost from "./pages/Posts/UpdatePost";
+import { setupAxiosInterceptors } from "./api/axiosConfig";
+import RateLimiting from "./components/RateLimiting";
 
 export const serverURL = "http://localhost:8000";
 
@@ -50,12 +52,19 @@ const ProtectedRoute = ({ loggedInUserData, children }) => {
 };
 
 const App = () => {
+  const navigate = useNavigate();
   const { getCurrentLoggedInUser, loggedInUserData } = useUserStore();
   const { getUserChannel, getAllChannels } = useChannelStore();
   const { getAllVideos, getAllShorts } = useContentStore();
   const { getSubscribedContentData } = useSubscribedContentStore();
   const { getHistory } = useHistoryStore();
   const { getRecommendedContent } = useRecommendedStore();
+
+  // This effect connects React Router's navigate to your interceptor
+  useEffect(() => {
+    setupAxiosInterceptors(navigate);
+  }, [navigate]);
+
   useEffect(() => {
     getCurrentLoggedInUser();
     getUserChannel();
@@ -79,6 +88,7 @@ const App = () => {
     <>
       <CustomAlert />
       <Routes>
+        <Route path="/rate-limited" element={<RateLimiting />} />
         <Route path="/" element={<Home />}>
           <Route
             path="/shorts"
