@@ -21,12 +21,6 @@ const playlistSchema = new mongoose.Schema(
         ref: "Video",
       },
     ],
-    shorts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Short",
-      },
-    ],
     savedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,

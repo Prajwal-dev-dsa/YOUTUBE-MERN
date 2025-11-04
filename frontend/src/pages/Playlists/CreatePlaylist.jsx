@@ -87,28 +87,32 @@ const CreatePlaylist = () => {
             {videosData?.length === 0 ? (
               <p className="text-sm text-gray-400">No videos available</p>
             ) : (
-              <div className="scrollbar-hide grid grid-cols-2 gap-4 max-h-72 overflow-y-auto scrollbar-hide">
-                {videosData?.map((video) => {
-                  return (
-                    <div
-                      key={video._id}
-                      className={`cursor-pointer transition-all duration-200 rounded-lg overflow-hidden border-2 ${
-                        selectedVideos.includes(video._id)
-                          ? "border-[#ff0000]"
-                          : "border-[#3b3b3b]"
-                      }`}
-                      onClick={() => toggleVideoSelect(video._id)}
-                    >
-                      <img
-                        src={video?.thumbnail}
-                        alt=""
-                        className="w-full h-28 object-cover"
-                      />
-                      <p className="p-2 text-sm truncate">{video?.title}</p>
-                    </div>
-                  );
-                })}
-              </div>
+              <>
+                <div className="scrollbar-hide grid grid-cols-2 gap-4 max-h-72 overflow-y-auto scrollbar-hide">
+                  {videosData?.map((video) => {
+                    return (
+                      video?.channel?._id === channelData?._id && (
+                        <div
+                          key={video?._id}
+                          className={`cursor-pointer transition-all duration-200 rounded-lg overflow-hidden border-2 ${
+                            selectedVideos.includes(video._id)
+                              ? "border-[#ff0000]"
+                              : "border-[#3b3b3b]"
+                          }`}
+                          onClick={() => toggleVideoSelect(video._id)}
+                        >
+                          <img
+                            src={video?.thumbnail}
+                            alt=""
+                            className="w-full h-28 object-cover"
+                          />
+                          <p className="p-2 text-sm truncate">{video?.title}</p>
+                        </div>
+                      )
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
           <button

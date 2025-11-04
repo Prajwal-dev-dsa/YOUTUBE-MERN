@@ -33,7 +33,7 @@ const ChannelPage = () => {
   const { getSubscribedContentData, subscribedChannels } =
     useSubscribedContentStore();
   const { loggedInUserData } = useUserStore();
-  const channelData = allChannelsData.find(
+  const channelData = allChannelsData?.find(
     (channel) => channel?._id === channelId
   );
   const [channel, setChannel] = useState(channelData);
@@ -45,7 +45,7 @@ const ChannelPage = () => {
 
   useEffect(() => {
     if (allChannelsData && channelId) {
-      const currentChannelData = allChannelsData.find(
+      const currentChannelData = allChannelsData?.find(
         (ch) => ch?._id === channelId
       );
       setChannel(currentChannelData);
@@ -244,7 +244,6 @@ const ChannelPage = () => {
             </nav>
           </div>
         </div>
-
         <div className="mt-6">{renderContent()}</div>
       </div>
     </div>

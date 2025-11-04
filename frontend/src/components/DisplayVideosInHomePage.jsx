@@ -47,6 +47,7 @@ const DisplayVideosInHomePage = () => {
           channelName={video?.channel?.name}
           views={video?.views}
           id={video?._id}
+          createdAt={video?.createdAt}
         />
       ))}
     </div>
