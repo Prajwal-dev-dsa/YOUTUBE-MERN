@@ -8,6 +8,8 @@ import {
   sendOTP,
   verifyOTP,
   resetPassword,
+  emailVerificationSendOTP,
+  emailVerificationVerifyOTP,
 } from "../controllers/auth.controller.js";
 import upload from "../middlewares/multer.js";
 
@@ -20,5 +22,7 @@ authRouter.post("/google", googleSignIn);
 authRouter.post("/send-otp", sendOTP);
 authRouter.post("/verify-otp", verifyOTP);
 authRouter.post("/reset-password", resetPassword);
+authRouter.post("/send-otp-email", emailVerificationSendOTP);
+authRouter.post("/verify-otp-email", emailVerificationVerifyOTP);
 
 export default authRouter;

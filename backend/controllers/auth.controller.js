@@ -167,6 +167,51 @@ export const googleSignIn = async (req, res) => {
   }
 };
 
+let generatedOTP = null;
+let otpExpiration = null;
+
+export const emailVerificationSendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    generatedOTP = otp;
+    otpExpiration = Date.now() + 5 * 60 * 1000; // 5 minutes
+    sendMail(email, otp);
+    return res.status(200).json({ message: "OTP sent successfully" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred during authentication." });
+  }
+}
+
+export const emailVerificationVerifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP are required" });
+    }
+    if (generatedOTP != otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+    if (Date.now() > otpExpiration) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+    generatedOTP = null;
+    otpExpiration = null;
+    return res.status(200).json({ message: "OTP verified successfully" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred during authentication." });
+  }
+}
+
 export const sendOTP = async (req, res) => {
   try {
     const { email } = req.body;

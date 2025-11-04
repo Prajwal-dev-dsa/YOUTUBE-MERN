@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
 
 import connectDB from "./config/dB.js";
 import authRouter from "./routes/auth.route.js";
@@ -21,6 +23,14 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // disable CSP for simplicity; configure as needed
+  })
+);
+
+app.use(morgan("dev")); // log all the requests to the console
 
 // routes
 app.use("/api/auth", authRouter);

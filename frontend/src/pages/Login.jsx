@@ -8,6 +8,9 @@ import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { serverURL } from "../App";
 import { useUserStore } from "../store/useUserStore";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/firebase";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -65,6 +68,31 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const res = await signInWithPopup(auth, provider);
+      console.log(res);
+
+      const user = {
+        userName: res.user.displayName,
+        email: res.user.email,
+        photoUrl: res.user.photoURL,
+      };
+      const result = await axios.post(`${serverURL}/api/auth/google`, user, {
+        withCredentials: true,
+      });
+      console.log(result);
+      setLoggedInUserData(result.data);
+      showCustomAlert("Login successfully");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      showCustomAlert("Login failed");
+    } finally {
+      // setToggle(false);
+    }
+  };
+
   return (
     <div className="bg-[#181818] min-h-screen flex items-center justify-center text-white">
       <div className="bg-[#202124] p-10 rounded-2xl w-full max-w-md shadow-lg">
@@ -106,6 +134,12 @@ const Login = () => {
               className="w-full border-red-500 border-1 hover:bg-zinc-800 text-white p-2 font-sm rounded-full mt-3 transition duration-300 ease-in-out cursor-pointer"
             >
               Create New Account
+            </button>
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full border-red-500 border-1 flex justify-center items-center gap-2 hover:bg-zinc-800 text-white p-2 font-sm rounded-full mt-3 transition duration-300 ease-in-out cursor-pointer"
+            >
+              <FcGoogle className="text-2xl" /> Google Sign In
             </button>
           </div>
         )}
