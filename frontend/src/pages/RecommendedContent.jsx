@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecommendedStore } from "../store/useRecommendedStore";
 import VideoCard from "../components/VideoCard";
 import ShortCard from "../components/ShortCard";

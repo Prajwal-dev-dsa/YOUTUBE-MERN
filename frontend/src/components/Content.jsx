@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useChannelStore } from "../store/useChannelStore";
 import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";

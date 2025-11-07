@@ -9,10 +9,6 @@ const channelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  userName: {
-    type: String,
-    unique: true,
-  },
   description: {
     type: String,
     default: "",

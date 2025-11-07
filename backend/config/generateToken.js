@@ -5,7 +5,7 @@ dotenv.config();
 
 export const generateToken = async (userId) => {
   try {
-    const token = await jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
       expiresIn: "15d",
     });
     return token;

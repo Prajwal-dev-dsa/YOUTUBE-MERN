@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import logo from "../../assets/yt_icon.png";
 import { useUserStore } from "../../store/useUserStore";
 import { FaUserCircle } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { ClipLoader } from "react-spinners";
 const CreateChannel = () => {
   const navigate = useNavigate();
   const { loggedInUserData } = useUserStore();
-  const [step, setStep] = useState(1); // to count which step you are currently in
+  const [step, setStep] = useState(1);
   const [avatar, setAvatar] = useState(null);
   const [channelName, setChannelName] = useState("");
   const [description, setDescription] = useState("");
@@ -45,19 +45,11 @@ const CreateChannel = () => {
     }
   };
 
-  function generateUniqueUsername(fullName) {
-    const baseUsername = fullName.toLowerCase().replace(/\s+/g, "");
-    const uniqueSuffix = Math.random().toString(36).substring(2, 8);
-    const uniqueUsername = `${baseUsername}_${uniqueSuffix}`;
-    return uniqueUsername;
-  }
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append("name", channelName);
-      formData.append("userName", generateUniqueUsername(channelName));
       formData.append("avatar", avatar);
       formData.append("banner", banner);
       formData.append("description", description);

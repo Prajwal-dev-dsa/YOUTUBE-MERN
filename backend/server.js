@@ -33,7 +33,7 @@ app.use(
 
 app.use(morgan("dev")); // log all the requests to the console
 
-app.use(rateLimiter); //use before defining routes to apply rate limiting
+app.use(rateLimiter); // use before defining routes to apply rate limiting
 
 // routes
 app.use("/api/auth", authRouter);

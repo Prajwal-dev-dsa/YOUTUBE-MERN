@@ -184,7 +184,7 @@ contentRouter.post(
   uploads.single("image"),
   createPost
 );
-contentRouter.get("/getAllPosts", protectedRoute, getAllPosts); // Added protectedRoute
+contentRouter.get("/getAllPosts", protectedRoute, getAllPosts);
 contentRouter.put("/post/toggleLikes", protectedRoute, toggleLikesOfPost);
 contentRouter.post(
   "/post/addCommentsInThePost",

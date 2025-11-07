@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-let alertHandle; // initially undefined, once its mounted using app.jsx it will have that function. Now whenever somebody calls below function alertHandle will assign values to message and showAlert.
+let alertHandle; // initially undefined, once its mounted using app.jsx it will have that function. Now whenever somebody calls below function, alertHandle will assign values to message and showAlert.
 
 export const showCustomAlert = (message) => {
   if (alertHandle) {

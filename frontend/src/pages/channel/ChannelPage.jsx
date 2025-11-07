@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useChannelStore } from "../../store/useChannelStore";
 import { useUserStore } from "../../store/useUserStore";
@@ -185,7 +185,7 @@ const ChannelPage = () => {
     <div className="w-full bg-[#0f0f0f] text-white min-h-screen">
       <div className="w-full h-32 md:h-48">
         <img
-          src={channel.banner}
+          src={channel?.banner}
           alt="Channel Banner"
           className="w-full h-full object-cover"
         />
@@ -194,18 +194,18 @@ const ChannelPage = () => {
       <div className="p-4 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <img
-            src={channel.avatar}
+            src={channel?.avatar}
             alt="Channel Avatar"
             className="size-24 sm:size-32 rounded-full border-4 border-[#0f0f0f] -mt-12 sm:-mt-16 flex-shrink-0"
           />
           <div className="flex-grow text-center sm:text-left mt-2 sm:mt-0">
-            <h1 className="text-2xl font-bold">{channel.name}</h1>
+            <h1 className="text-2xl font-bold">{channel?.name}</h1>
             <div className="flex items-center justify-center sm:justify-start gap-x-3 text-sm text-gray-400 mt-1 flex-wrap">
-              <span>{channel.subscribers?.length || 0} subscribers</span>
+              <span>{channel?.subscribers?.length || 0} subscribers</span>
               <span>•</span>
-              <span>{channel.videos?.length || 0} videos</span>
+              <span>{channel?.videos?.length || 0} videos</span>
               <span>•</span>
-              <span>{channel.category || "No Category"}</span>
+              <span>{channel?.category || "No Category"}</span>
             </div>
           </div>
           <div className="w-full sm:w-auto mt-4 sm:mt-0 flex-shrink-0">

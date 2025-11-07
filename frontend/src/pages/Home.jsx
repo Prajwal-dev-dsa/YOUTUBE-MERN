@@ -3,13 +3,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import logo from "../assets/yt_icon.png";
 import { IoIosSearch } from "react-icons/io";
 import { AiFillAudio } from "react-icons/ai";
-import {
-  FaMicrophone,
-  FaSearch,
-  FaSpinner,
-  FaTimes,
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaMicrophone, FaSearch, FaTimes, FaUserCircle } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHistory } from "react-icons/fa";
 import { FaThumbsUp } from "react-icons/fa6";
@@ -24,7 +18,6 @@ import Profile from "../components/Profile";
 import DisplayVideosInHomePage from "../components/DisplayVideosInHomePage";
 import DisplayShortsInHomePage from "../components/DisplayShortsInHomePage";
 import { useSubscribedContentStore } from "../store/useSubscribedContentStore";
-import { SidebarOpen } from "lucide-react";
 import { useRef } from "react";
 import { showCustomAlert } from "../components/CustomAlert";
 import axios from "axios";
@@ -45,10 +38,8 @@ const Home = () => {
   const [selectedItem, setSelectedItem] = useState("Home"); // for desktop
   const [activeItem, setActiveItem] = useState("Home"); // for mobile
 
-  // Toggling profile state
   const [toggle, setToggle] = useState(false);
 
-  // Toggling search state
   const [popup, setPopup] = useState(false);
 
   const [listening, setListening] = useState(false);
@@ -56,7 +47,6 @@ const Home = () => {
   const [searchData, setSearchData] = useState("");
   const [loading, setLoading] = useState(false);
   const [filterData, setFilterData] = useState("");
-  const [filterLoading, setFilterLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const recoginitionRef = useRef();
@@ -149,7 +139,6 @@ const Home = () => {
   };
 
   const handleCategoryFilter = async (category) => {
-    setFilterLoading(true);
     try {
       const result = await axios.post(
         `${serverURL}/api/content/filter-category`,
@@ -187,8 +176,6 @@ const Home = () => {
     } catch (error) {
       console.log(error.message);
       showCustomAlert("Something went wrong! Please try again.");
-    } finally {
-      setFilterLoading(false);
     }
   };
 

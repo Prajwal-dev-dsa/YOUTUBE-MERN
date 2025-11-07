@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -15,9 +15,9 @@ import { auth, provider } from "../../utils/firebase";
 const Register = () => {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false); // loading state for UI
+  const [loading, setLoading] = useState(false);
 
-  const [step, setStep] = useState(1); // to count which step you are currently in
+  const [step, setStep] = useState(1);
 
   // name & email fields
   const [userName, setUserName] = useState("");
@@ -117,8 +117,6 @@ const Register = () => {
     } catch (error) {
       console.log(error);
       showCustomAlert("Login failed");
-    } finally {
-      // setToggle(false);
     }
   };
 

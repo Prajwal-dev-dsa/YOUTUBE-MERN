@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useContentStore } from "../../store/useContentStore";
 import {
   FaArrowDown,
@@ -14,6 +14,7 @@ import { useUserStore } from "../../store/useUserStore";
 import axios from "axios";
 import { serverURL } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { useSubscribedContentStore } from "../../store/useSubscribedContentStore";
 
 const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   return (
@@ -41,6 +42,7 @@ const Shorts = () => {
   const navigate = useNavigate();
   const { loggedInUserData } = useUserStore();
   const { shorts } = useContentStore();
+  const { subscribedChannels, getSubscribedContentData } = useSubscribedContentStore();
   const [shortList, setShortList] = useState([]);
   const [pauseOrPlayIcon, setPauseOrPlayIcon] = useState(null);
   const [toggleCommentButton, setToggleCommentButton] = useState(false);
@@ -54,6 +56,7 @@ const Shorts = () => {
     if (!shorts) return;
     const shuffleShorts = [...shorts].sort(() => Math.random() - 0.5);
     setShortList(shuffleShorts);
+    getSubscribedContentData();
   }, [shorts]);
 
   useEffect(() => {
@@ -62,51 +65,55 @@ const Shorts = () => {
         entries.forEach((entry) => {
           const index = Number(entry.target.dataset.index);
           const video = shortRefs.current[index];
-          setActiveIdx(index);
-          if (video) {
-            if (entry.isIntersecting) {
+          
+          if (entry.isIntersecting) {
+            setActiveIdx(index);
+            if (video) {
               video.muted = false;
               video.currentTime = 0;
-              video.play();
+              video.play().catch(e => console.log("Autoplay blocked", e));
               setPauseOrPlayIcon(null);
               const currentPlayingShortId = shortList[index]?._id;
-              if (!watchedShorts.includes(currentPlayingShortId)) {
+              if (currentPlayingShortId && !watchedShorts.includes(currentPlayingShortId)) {
                 addNewView(currentPlayingShortId);
                 setWatchedShorts((prev) => [...prev, currentPlayingShortId]);
               }
-            } else {
+            }
+          } else {
+            if (video) {
               video.muted = true;
               video.pause();
-              setPauseOrPlayIcon(index);
+            }
+            if (index === activeIdx) {
+               setPauseOrPlayIcon(index);
             }
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.6 }
     );
     shortRefs.current.forEach((video) => {
       if (video) observer.observe(video);
     });
     return () => observer.disconnect();
-  }, [shortList]);
+  }, [shortList, watchedShorts, activeIdx]);
 
   useEffect(() => {
     const addHistory = async () => {
       try {
         const shortId = shortList[activeIdx]?._id;
         if (!shortId) return;
-        const res = await axios.post(
+        await axios.post(
           `${serverURL}/api/user/add-history`,
           { contentId: shortId, contentType: "Short" },
           { withCredentials: true }
         );
-        console.log(res.data);
       } catch (error) {
         console.log(error);
       }
     };
     if (shortList.length > 0) addHistory();
-  }, [shortList, activeIdx]);
+  }, [activeIdx, shortList]);
 
   const togglePauseOrPlay = (index) => {
     const video = shortRefs.current[index];
@@ -125,23 +132,12 @@ const Shorts = () => {
     if (!channelId) return;
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${serverURL}/api/user/toggle-subscribers`,
         { channelId },
         { withCredentials: true }
       );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short.channel?._id === channelId) {
-            const updatedChannel = {
-              ...short.channel,
-              subscribers: response.data.subscribers,
-            };
-            return { ...short, channel: updatedChannel };
-          }
-          return short;
-        })
-      );
+      await getSubscribedContentData();
     } catch (error) {
       console.log(error);
     } finally {
@@ -149,25 +145,32 @@ const Shorts = () => {
     }
   };
 
+  const isSubscribedTo = (channelId) => {
+    if (!loggedInUserData || !subscribedChannels) return false;
+    return subscribedChannels.some(c => c._id === channelId);
+  };
+
   const toggleLikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isLiked = short.likes.includes(userId);
+                return {
+                    ...short,
+                    likes: isLiked ? short.likes.filter(id => id !== userId) : [...short.likes, userId],
+                    dislikes: short.dislikes.filter(id => id !== userId)
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleLikes`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              likes: response.data.likes,
-              dislikes: response.data.dislikes,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -176,23 +179,25 @@ const Shorts = () => {
 
   const toggleDislikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isDisliked = short.dislikes.includes(userId);
+                return {
+                    ...short,
+                    dislikes: isDisliked ? short.dislikes.filter(id => id !== userId) : [...short.dislikes, userId],
+                    likes: short.likes.filter(id => id !== userId)
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleDislikes`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              likes: response.data.likes,
-              dislikes: response.data.dislikes,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -201,22 +206,24 @@ const Shorts = () => {
 
   const toggleSavedBy = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isSaved = short.savedBy.includes(userId);
+                return {
+                    ...short,
+                    savedBy: isSaved ? short.savedBy.filter(id => id !== userId) : [...short.savedBy, userId]
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleSavedBy`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              savedBy: response.data.savedBy,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -277,17 +284,17 @@ const Shorts = () => {
   };
 
   return (
-    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide">
+    <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-[#0f0f0f] min-h-screen relative text-white">
       {shortList.map((short, index) => (
         <div
           key={short?._id}
-          className="min-h-screen w-full flex md:items-center items-start mt-[90px] md:mt[0px] justify-center snap-start pt-[40px] md:pt-[0px]"
+          className="h-screen w-full flex items-center justify-center snap-start"
         >
           <div className="relative w-full max-w-sm aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-xl border border-gray-700 cursor-pointer">
             <video
               src={short?.shortUrl}
               ref={(el) => (shortRefs.current[index] = el)}
-              autoPlay
+              autoPlay={index === 0} // Only autoplay first video initially
               loop
               playsInline
               data-index={index}
@@ -305,30 +312,23 @@ const Shorts = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-1">
               <div className="flex items-center gap-2">
                 <img
-                  onClick={() =>
-                    navigate(`/channel-page/${short?.channel?._id}`)
-                  }
                   src={short?.channel?.avatar}
                   alt=""
-                  className="size-8 rounded-full border-1 border-gray-600 cursor-pointer"
+                  className="size-8 rounded-full border-1 border-gray-600"
+                  onClick={() => navigate(`/channel-page/${short?.channel?._id}`)}
                 />
-                <p
-                  className="text-sm text-white px-1 cursor-pointer"
-                  onClick={() =>
-                    navigate(`/channel-page/${short?.channel?._id}`)
-                  }
-                >
+                <p className="text-sm text-white px-1 cursor-pointer" onClick={() => navigate(`/channel-page/${short?.channel?._id}`)}>
                   {short?.channel?.name}
                 </p>
                 <button
-                  onClick={() => handleSubscribe(short?.channel?._id)}
+                  onClick={(e) => { e.stopPropagation(); handleSubscribe(short?.channel?._id); }}
                   className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
-                    short?.channel?.subscribers.includes(loggedInUserData._id)
+                    isSubscribedTo(short?.channel?._id)
                       ? "bg-gray-800 text-white"
                       : "bg-white text-black"
                   }`}
                 >
-                  {short?.channel?.subscribers.includes(loggedInUserData._id)
+                  {isSubscribedTo(short?.channel?._id)
                     ? "Subscribed"
                     : "Subscribe"}
                 </button>
@@ -381,7 +381,7 @@ const Shorts = () => {
                   <input
                     type="text"
                     placeholder="Add a comment..."
-                    className="w-full border-b border-gray-700 bg-transparent py-1 text-sm focus:outline-none focus:border-red-600"
+                    className="border border-gray-800 bg-[#0f0f0f] rounded-lg px-3 py-2 outline-none focus:ring-1 focus:ring-red-600 w-full"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                   />
@@ -392,7 +392,6 @@ const Shorts = () => {
                     Post
                   </button>
                 </div>
-
                 <div className="mt-4 space-y-3 px-3">
                   {short.comments?.length > 0 ? (
                     short.comments
@@ -476,7 +475,7 @@ const ReplyCard = ({ short, comment, handleReply }) => {
   return (
     <div className="mt-3 ml-12">
       {showReplyInput ? (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <input
             type="text"
             placeholder="Add a reply..."
@@ -487,13 +486,13 @@ const ReplyCard = ({ short, comment, handleReply }) => {
           />
           <button
             onClick={() => setShowReplyInput(false)}
-            className="text-xs font-semibold text-gray-400 hover:text-white px-2 py-1 rounded-full flex-shrink-0"
+            className="text-xs font-semibold text-gray-400 hover:text-white px-3 py-2 rounded-full flex-shrink-0"
           >
             Cancel
           </button>
           <button
             onClick={handleReplySubmit}
-            className="bg-red-600 text-white px-2 py-1 text-xs font-semibold rounded-full hover:bg-red-700 transition flex-shrink-0"
+            className="bg-red-600 text-white px-3 py-1 text-xs font-semibold rounded-full hover:bg-red-700 transition flex-shrink-0"
           >
             Reply
           </button>

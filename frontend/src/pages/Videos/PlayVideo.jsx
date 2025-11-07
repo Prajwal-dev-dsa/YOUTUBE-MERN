@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useContentStore } from "../../store/useContentStore";
 import { serverURL } from "../../App";
 import {
@@ -17,10 +17,10 @@ import {
 } from "react-icons/fa";
 import { SiYoutubeshorts } from "react-icons/si";
 import ShortCard from "../../components/ShortCard";
-import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../store/useUserStore";
 import VideoDescription from "../../components/VideoDescription";
 import axios from "axios";
+import { useSubscribedContentStore } from "../../store/useSubscribedContentStore";
 
 const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   return (
@@ -48,8 +48,9 @@ const PlayVideo = () => {
   const navigate = useNavigate();
   const processedVideoIdRef = useRef(null);
   const videoRef = useRef(null);
-  const { videos, shorts, incrementViewCount } = useContentStore();
+  const { videos, shorts, getAllVideos, getAllShorts, incrementViewCount } = useContentStore();
   const { loggedInUserData } = useUserStore();
+  const { subscribedChannels, getSubscribedContentData } = useSubscribedContentStore();
   const { videoId } = useParams();
   const [video, setVideo] = useState(null);
   const [channel, setChannel] = useState(null);
@@ -63,6 +64,12 @@ const PlayVideo = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    getAllVideos();
+    getAllShorts();
+    getSubscribedContentData();
+  }, []);
 
   useEffect(() => {
     if (!videos || videoId === processedVideoIdRef.current) {
@@ -102,9 +109,13 @@ const PlayVideo = () => {
   }, [videoId, videos, incrementViewCount]);
 
   useEffect(() => {
-    if (!channel || !loggedInUserData) return;
-    setIsSubscribed(channel.subscribers.includes(loggedInUserData._id));
-  }, [channel, loggedInUserData]);
+    if (!channel || !loggedInUserData || !subscribedChannels) return;
+    
+    const isActuallySubscribed = subscribedChannels.some(
+      (subbedChannel) => subbedChannel._id === channel._id
+    );
+    setIsSubscribed(isActuallySubscribed);
+  }, [channel, loggedInUserData, subscribedChannels]);
 
   useEffect(() => {
     const addHistory = async () => {
@@ -207,15 +218,13 @@ const PlayVideo = () => {
     if (!channel) return;
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${serverURL}/api/user/toggle-subscribers`,
         { channelId: channel._id },
         { withCredentials: true }
       );
-      setChannel((prev) => ({
-        ...prev,
-        subscribers: response.data?.subscribers || prev.subscribers,
-      }));
+      await getSubscribedContentData();
+      
     } catch (error) {
       console.log(error);
     } finally {

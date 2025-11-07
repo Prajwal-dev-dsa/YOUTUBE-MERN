@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "../store/useUserStore";
 import { FiLogOut } from "react-icons/fi";
 import { MdOutlineSubscriptions, MdOutlineSwitchAccount } from "react-icons/md";

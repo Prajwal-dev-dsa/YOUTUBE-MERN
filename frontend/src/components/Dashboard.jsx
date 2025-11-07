@@ -1,4 +1,3 @@
-import React from "react";
 import { useChannelStore } from "../store/useChannelStore";
 import { useNavigate } from "react-router-dom";
 import { FaComment, FaEye, FaThumbsUp } from "react-icons/fa";

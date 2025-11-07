@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import logo from "../assets/yt_icon.png";
 import { FaUserCircle } from "react-icons/fa";
@@ -17,9 +17,9 @@ const Login = () => {
 
   const { setLoggedInUserData } = useUserStore();
 
-  const [step, setStep] = useState(1); // to count which step you are currently in
+  const [step, setStep] = useState(1);
 
-  const [loading, setLoading] = useState(false); // loading state for UI
+  const [loading, setLoading] = useState(false);
 
   // email & password fields
   const [email, setEmail] = useState("");
@@ -88,8 +88,6 @@ const Login = () => {
     } catch (error) {
       console.log(error);
       showCustomAlert("Login failed");
-    } finally {
-      // setToggle(false);
     }
   };
 

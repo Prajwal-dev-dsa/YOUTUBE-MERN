@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   FaThumbsUp,
   FaRegThumbsUp,
-  FaRegThumbsDown,
   FaRegCommentAlt,
-  FaEllipsisV,
   FaArrowDown,
 } from "react-icons/fa";
 import moment from "moment";

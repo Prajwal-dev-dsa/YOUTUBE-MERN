@@ -1,19 +1,19 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useContentStore } from "../../store/useContentStore";
+import { serverURL } from "../../App";
 import {
-  FaArrowDown,
   FaBookmark,
-  FaComment,
   FaDownload,
   FaPlay,
   FaThumbsDown,
+  FaComment,
   FaThumbsUp,
 } from "react-icons/fa";
-import VideoDescription from "../../components/VideoDescription";
 import { useUserStore } from "../../store/useUserStore";
+import VideoDescription from "../../components/VideoDescription";
 import axios from "axios";
-import { serverURL } from "../../App";
-import { useNavigate, useParams } from "react-router-dom";
+import { useSubscribedContentStore } from "../../store/useSubscribedContentStore";
 
 const IconButtons = ({ icon: Icon, active, label, count, onClick }) => {
   return (
@@ -42,6 +42,8 @@ const PlayShort = () => {
   const { shortId } = useParams();
   const { loggedInUserData } = useUserStore();
   const { shorts } = useContentStore();
+  const { subscribedChannels, getSubscribedContentData } = useSubscribedContentStore();
+  
   const [shortList, setShortList] = useState([]);
   const [pauseOrPlayIcon, setPauseOrPlayIcon] = useState(null);
   const [toggleCommentButton, setToggleCommentButton] = useState(false);
@@ -52,6 +54,8 @@ const PlayShort = () => {
 
   useEffect(() => {
     if (!shorts) return;
+    getSubscribedContentData();
+    
     const shortToBePlayedFirst = shorts.find((short) => short?._id === shortId);
     const shuffleShorts = [...shorts].sort(() => Math.random() - 0.5);
     if (shortToBePlayedFirst) {
@@ -63,7 +67,7 @@ const PlayShort = () => {
     } else {
       setShortList(shuffleShorts);
     }
-  }, [shorts]);
+  }, [shorts, shortId]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -75,10 +79,10 @@ const PlayShort = () => {
             if (entry.isIntersecting) {
               video.muted = false;
               video.currentTime = 0;
-              video.play();
+              video.play().catch(e => console.log("Autoplay blocked", e));
               setPauseOrPlayIcon(null);
               const currentPlayingShortId = shortList[index]?._id;
-              if (!watchedShorts.includes(currentPlayingShortId)) {
+              if (currentPlayingShortId && !watchedShorts.includes(currentPlayingShortId)) {
                 addNewView(currentPlayingShortId);
                 setWatchedShorts((prev) => [...prev, currentPlayingShortId]);
               }
@@ -90,13 +94,13 @@ const PlayShort = () => {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.6 }
     );
     shortRefs.current.forEach((video) => {
       if (video) observer.observe(video);
     });
     return () => observer.disconnect();
-  }, [shortList]);
+  }, [shortList, watchedShorts]);
 
   useEffect(() => {
     const addHistory = async () => {
@@ -131,23 +135,12 @@ const PlayShort = () => {
     if (!channelId) return;
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         `${serverURL}/api/user/toggle-subscribers`,
         { channelId },
         { withCredentials: true }
       );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short.channel?._id === channelId) {
-            const updatedChannel = {
-              ...short.channel,
-              subscribers: response.data.subscribers,
-            };
-            return { ...short, channel: updatedChannel };
-          }
-          return short;
-        })
-      );
+      await getSubscribedContentData();
     } catch (error) {
       console.log(error);
     } finally {
@@ -155,25 +148,32 @@ const PlayShort = () => {
     }
   };
 
+  const isSubscribedTo = (channelId) => {
+      if (!loggedInUserData || !subscribedChannels) return false;
+      return subscribedChannels.some(c => c._id === channelId);
+  };
+
   const toggleLikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isLiked = short.likes.includes(userId);
+                return {
+                    ...short,
+                    likes: isLiked ? short.likes.filter(id => id !== userId) : [...short.likes, userId],
+                    dislikes: short.dislikes.filter(id => id !== userId)
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleLikes`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              likes: response.data.likes,
-              dislikes: response.data.dislikes,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -182,23 +182,25 @@ const PlayShort = () => {
 
   const toggleDislikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isDisliked = short.dislikes.includes(userId);
+                return {
+                    ...short,
+                    dislikes: isDisliked ? short.dislikes.filter(id => id !== userId) : [...short.dislikes, userId],
+                    likes: short.likes.filter(id => id !== userId)
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleDislikes`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              likes: response.data.likes,
-              dislikes: response.data.dislikes,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -207,22 +209,24 @@ const PlayShort = () => {
 
   const toggleSavedBy = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
+    setShortList((prevList) =>
+        prevList.map((short) => {
+            if (short._id === shortId) {
+                const userId = loggedInUserData._id;
+                const isSaved = short.savedBy.includes(userId);
+                return {
+                    ...short,
+                    savedBy: isSaved ? short.savedBy.filter(id => id !== userId) : [...short.savedBy, userId]
+                };
+            }
+            return short;
+        })
+    );
     try {
-      const response = await axios.put(
+      await axios.put(
         `${serverURL}/api/content/short/${shortId}/toggleSavedBy`,
         {},
         { withCredentials: true }
-      );
-      setShortList((prevList) =>
-        prevList.map((short) => {
-          if (short._id === shortId) {
-            return {
-              ...short,
-              savedBy: response.data.savedBy,
-            };
-          }
-          return short;
-        })
       );
     } catch (error) {
       console.log(error);
@@ -329,12 +333,12 @@ const PlayShort = () => {
                 <button
                   onClick={() => handleSubscribe(short?.channel?._id)}
                   className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
-                    short?.channel?.subscribers.includes(loggedInUserData._id)
+                    isSubscribedTo(short?.channel?._id)
                       ? "bg-gray-800 text-white"
                       : "bg-white text-black"
                   }`}
                 >
-                  {short?.channel?.subscribers.includes(loggedInUserData._id)
+                  {isSubscribedTo(short?.channel?._id)
                     ? "Subscribed"
                     : "Subscribe"}
                 </button>

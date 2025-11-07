@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaImage } from "react-icons/fa";
 import axios from "axios";
 import { useChannelStore } from "../../store/useChannelStore";

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { SiYoutubeshorts } from "react-icons/si";
 import { useContentStore } from "../store/useContentStore";
 import ShortCard from "./ShortCard";

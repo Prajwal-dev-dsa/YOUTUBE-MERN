@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";

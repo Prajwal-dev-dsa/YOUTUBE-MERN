@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -12,7 +12,7 @@ const CustomizeChannel = () => {
   const navigate = useNavigate();
   const { setLoggedInUserData } = useUserStore();
   const { channelData, setChannelData } = useChannelStore();
-  const [step, setStep] = useState(1); // to count which step you are currently in
+  const [step, setStep] = useState(1);
   const [avatar, setAvatar] = useState(channelData?.avatar);
   const [channelName, setChannelName] = useState(channelData?.name);
   const [description, setDescription] = useState(channelData?.description);
@@ -71,19 +71,11 @@ const CustomizeChannel = () => {
       ? URL.createObjectURL(banner) // If it's a File object, create an object URL
       : null; // Otherwise, there's no source
 
-  function generateUniqueUsername(fullName) {
-    const baseUsername = fullName.toLowerCase().replace(/\s+/g, "");
-    const uniqueSuffix = Math.random().toString(36).substring(2, 8);
-    const uniqueUsername = `${baseUsername}_${uniqueSuffix}`;
-    return uniqueUsername;
-  }
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const formData = new FormData();
       formData.append("name", channelName);
-      formData.append("userName", generateUniqueUsername(channelName));
       formData.append("avatar", avatar);
       formData.append("banner", banner);
       formData.append("description", description);

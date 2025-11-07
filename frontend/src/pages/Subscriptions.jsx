@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSubscribedContentStore } from "../store/useSubscribedContentStore";
 import { useNavigate } from "react-router-dom";
 import PlaylistCard from "../components/PlaylistCard";

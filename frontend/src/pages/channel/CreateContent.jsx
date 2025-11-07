@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaPen, FaPlay, FaVideo } from "react-icons/fa";
 import { FaList } from "react-icons/fa6";
 import createVideosIcon from "../../assets/createVideosIcon.png";

@@ -1,4 +1,3 @@
-import React from "react";
 import { useChannelStore } from "../../store/useChannelStore";
 import createVideosIcon from "../../assets/createVideosIcon.png";
 import { useNavigate } from "react-router-dom";

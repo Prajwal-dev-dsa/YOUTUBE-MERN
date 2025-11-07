@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Create a new ratelimiter, that allows 25 requests per 10 seconds
+// Create a new ratelimiter, that allows 100 requests per 10 seconds
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(), // connects to UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables
   limiter: Ratelimit.slidingWindow(100, "10 s"), // 100 requests per 10 seconds

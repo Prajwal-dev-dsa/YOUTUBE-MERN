@@ -2,7 +2,7 @@ import { create } from "zustand";
 import api from "../api/axiosConfig";
 import { serverURL } from "../App";
 
-export const useSubscribedContentStore = create((set, get) => ({
+export const useSubscribedContentStore = create((set) => ({
   subscribedChannels: null,
   subscribedChannelVideos: null,
   subscribedChannelShorts: null,

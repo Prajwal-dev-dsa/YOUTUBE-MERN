@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const ForgotPassword = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [step, setStep] = useState(1); // to count which step you are currently in
+  const [step, setStep] = useState(1);
 
   // otp & email fields
   const [email, setEmail] = useState("");

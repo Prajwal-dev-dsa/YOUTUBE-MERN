@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FaBookmark, FaRegBookmark, FaListUl, FaTimes } from "react-icons/fa";
 import VideoCard from "./VideoCard";
 import { useUserStore } from "../store/useUserStore";
@@ -23,7 +23,7 @@ const getVideoDuration = (videoUrl, callback) => {
 
 const PlaylistCard = ({ id, title, videos = [], savedBy = [] }) => {
   const { loggedInUserData } = useUserStore();
-  const thumbnail = videos[0]?.thumbnail || "/placeholder.png";
+  const thumbnail = videos[0]?.thumbnail;
 
   const [open, setOpen] = useState(false);
   const [durations, setDurations] = useState({});

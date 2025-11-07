@@ -15,13 +15,13 @@ export const getCurrentLoggedInUser = async (req, res) => {
 
 export const createChannel = async (req, res) => {
   try {
-    const { name, userName, description, category } = req.body;
+    const { name, description, category } = req.body;
     const userId = req.user._id;
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const existingChannel = await Channel.findOne({ userName });
+    const existingChannel = await Channel.findOne({ owner: userId });
     if (existingChannel) {
       return res.status(400).json({ message: "Channel already exists" });
     }
@@ -39,7 +39,6 @@ export const createChannel = async (req, res) => {
       name,
       avatar,
       banner,
-      userName,
       description,
       category,
       owner: userId,
@@ -58,7 +57,7 @@ export const createChannel = async (req, res) => {
 
 export const customizeChannel = async (req, res) => {
   try {
-    const { name, userName, description, category } = req.body;
+    const { name, description, category } = req.body;
     const userId = req.user._id;
     const user = await User.findById(userId);
     if (!user) {
@@ -85,7 +84,6 @@ export const customizeChannel = async (req, res) => {
         name: name || isChannelExists.name,
         avatar: avatar || isChannelExists.avatar,
         banner: banner || isChannelExists.banner,
-        userName: userName || isChannelExists.userName,
         description: description || isChannelExists.description,
         category: category || isChannelExists.category,
         owner: userId,
@@ -94,7 +92,7 @@ export const customizeChannel = async (req, res) => {
     );
 
     await User.findByIdAndUpdate(userId, {
-      userName: name || isChannelExists.userName,
+      userName: name || isChannelExists.name,
       photoUrl: avatar || isChannelExists.avatar,
     });
 

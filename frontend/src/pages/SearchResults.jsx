@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ChannelCard from "./ChannelCard";
 import VideoCard from "../components/VideoCard";
 import PlaylistCard from "../components/PlaylistCard";
