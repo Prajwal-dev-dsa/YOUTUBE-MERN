@@ -46,7 +46,6 @@ const Shorts = () => {
   const [shortList, setShortList] = useState([]);
   const [pauseOrPlayIcon, setPauseOrPlayIcon] = useState(null);
   const [toggleCommentButton, setToggleCommentButton] = useState(false);
-  const [loading, setLoading] = useState(false);
   const shortRefs = useRef([]);
   const [watchedShorts, setWatchedShorts] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -130,7 +129,6 @@ const Shorts = () => {
 
   const handleSubscribe = async (channelId) => {
     if (!channelId) return;
-    setLoading(true);
     try {
       await axios.post(
         `${serverURL}/api/user/toggle-subscribers`,
@@ -140,8 +138,6 @@ const Shorts = () => {
       await getSubscribedContentData();
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
   };
 
