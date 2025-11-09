@@ -14,13 +14,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = async (to, otp) => {
-  const info = await transporter.sendMail({
-    from: process.env.USER_EMAIL,
-    to: to,
-    subject: "Reset Your Password 🔑",
-    html: `<p>Use this OTP to reset your password: <b>${otp}</b>.<br>This OTP will expire in 5 minutes.</p>`, // HTML body
-  });
+const sendMail = async (to, otp, value) => {
+  if (value === "reset") {
+    const info = await transporter.sendMail({
+      from: process.env.USER_EMAIL,
+      to: to,
+      subject: "Reset Your Password 🔑",
+      html: `<p>Use this OTP to reset your password: <b>${otp}</b>.<br>This OTP will expire in 5 minutes.</p>`, // HTML body
+    });
+  }
+  else if (value === "verify") {
+    const info = await transporter.sendMail({
+      from: process.env.USER_EMAIL,
+      to: to,
+      subject: "Verify Your Email 📬",
+      html: `<p>Use this OTP to verify your email: <b>${otp}</b>.<br>This OTP will expire in 5 minutes.</p>`, // HTML body
+    });
+  }
 };
 
 export default sendMail;

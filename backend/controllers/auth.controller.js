@@ -167,7 +167,7 @@ export const emailVerificationSendOTP = async (req, res) => {
     const otp = Math.floor(1000 + Math.random() * 9000);
     generatedOTP = otp;
     otpExpiration = Date.now() + 5 * 60 * 1000; // 5 minutes
-    sendMail(email, otp);
+    sendMail(email, otp, "verify");
     return res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
     console.log(error);
@@ -214,7 +214,7 @@ export const sendOTP = async (req, res) => {
     user.generateOtp = otp;
     user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
     await user.save();
-    sendMail(email, otp);
+    sendMail(email, otp, "reset");
     return res.status(200).json({ message: "OTP sent successfully" });
   } catch (error) {
     console.log(error);
