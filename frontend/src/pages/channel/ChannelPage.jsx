@@ -45,7 +45,7 @@ const ChannelPage = () => {
 
   useEffect(() => {
     if (!channel || !loggedInUserData) return;
-    const isActuallySubscribed = subscribedChannels.some(
+    const isActuallySubscribed = subscribedChannels?.some(
       (subbedChannel) => subbedChannel._id === channel._id
     );
     setIsSubscribed(isActuallySubscribed);
@@ -194,7 +194,7 @@ const ChannelPage = () => {
             </div>
           </div>
           <div className="w-full sm:w-auto mt-4 sm:mt-0 flex-shrink-0">
-            <button
+            {loggedInUserData?.channel !== channel?._id && <button
               onClick={handleSubscribe}
               disabled={loading}
               className={`w-full sm:w-auto font-semibold px-5 py-2 rounded-full transition ${
@@ -204,7 +204,7 @@ const ChannelPage = () => {
               }`}
             >
               {isSubscribed ? "Subscribed" : "Subscribe"}
-            </button>
+            </button>}
           </div>
         </div>
 

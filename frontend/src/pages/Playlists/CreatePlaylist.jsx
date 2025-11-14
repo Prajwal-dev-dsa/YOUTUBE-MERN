@@ -117,7 +117,11 @@ const CreatePlaylist = () => {
           <button
             onClick={createPlaylist}
             disabled={!title || !description || selectedVideos.length === 0}
-            className="w-full p-3 rounded-full cursor-pointer bg-[#ff0000] hover:bg-[#ff0000]/80 text-white font-semibold disabled:bg-[#ff0000]/80"
+            className={`w-full p-3 rounded-full bg-[#ff0000] hover:bg-[#ff0000]/80 text-white font-semibold disabled:bg-[#ff0000]/80 ${
+              loading || !title || selectedVideos.length === 0
+                ? "cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
           >
             {loading ? (
               <ClipLoader color="#fff" size={20} />

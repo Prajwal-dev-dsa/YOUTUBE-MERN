@@ -29,15 +29,4 @@ export const useContentStore = create((set, get) => ({
       console.log(error);
     }
   },
-  incrementViewCount: (videoId) =>
-    set((state) => {
-      if (!state.videos) {
-        return {};
-      }
-      return {
-        videos: state.videos.map((video) =>
-          video._id === videoId ? { ...video, views: video.views + 1 } : video
-        ),
-      };
-    }),
 }));

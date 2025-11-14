@@ -48,9 +48,10 @@ const PlayVideo = () => {
   const navigate = useNavigate();
   const processedVideoIdRef = useRef(null);
   const videoRef = useRef(null);
-  const { videos, shorts, getAllVideos, getAllShorts, incrementViewCount } = useContentStore();
+  const { videos, shorts, getAllVideos, getAllShorts } = useContentStore();
   const { loggedInUserData } = useUserStore();
-  const { subscribedChannels, getSubscribedContentData } = useSubscribedContentStore();
+  const { subscribedChannels, getSubscribedContentData } =
+    useSubscribedContentStore();
   const { videoId } = useParams();
   const [video, setVideo] = useState(null);
   const [channel, setChannel] = useState(null);
@@ -72,45 +73,36 @@ const PlayVideo = () => {
   }, []);
 
   useEffect(() => {
-    if (!videos || videoId === processedVideoIdRef.current) {
-      return;
-    }
+    if (!videoId || !videos || videos.length === 0) return;
+    if (processedVideoIdRef.current === videoId) return;
 
-    window.scrollTo(0, 0);
-    const currentVideo = videos.find((video) => video._id === videoId);
+    const currentVideo = videos.find((v) => v._id === videoId);
+    if (!currentVideo) return;
 
-    if (currentVideo) {
-      setVideo(currentVideo);
-      setChannel(currentVideo.channel);
-      setIsVideoPlaying(true);
-
-      const addNewView = async () => {
-        try {
-          await axios.put(
-            `${serverURL}/api/content/video/${videoId}/getViewsOfTheVideo`,
-            {},
-            { withCredentials: true }
-          );
-          incrementViewCount(videoId);
-          setVideo((prev) => {
-            if (!prev) return null;
-            return {
-              ...prev,
-              views: prev.views + 1,
-            };
-          });
-          processedVideoIdRef.current = videoId;
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      addNewView();
-    }
-  }, [videoId, videos, incrementViewCount]);
+    setVideo(currentVideo);
+    setChannel(currentVideo.channel);
+    setIsVideoPlaying(true);
+    const addNewView = async () => {
+      try {
+        processedVideoIdRef.current = videoId;
+        setVideo((prev) => ({ ...prev, views: (prev?.views || 0) + 1 }));
+        await axios.put(
+          `${serverURL}/api/content/video/${videoId}/getViewsOfTheVideo`,
+          {},
+          { withCredentials: true }
+        );
+      } catch (err) {
+        console.log(err);
+        processedVideoIdRef.current = null;
+        setVideo((prev) => ({ ...prev, views: prev.views - 1 }));
+      }
+    };
+    addNewView();
+  }, [videoId, videos]);
 
   useEffect(() => {
     if (!channel || !loggedInUserData || !subscribedChannels) return;
-    
+
     const isActuallySubscribed = subscribedChannels.some(
       (subbedChannel) => subbedChannel._id === channel._id
     );
@@ -206,6 +198,7 @@ const PlayVideo = () => {
   };
 
   const handleDownload = () => {
+    if (!video) return;
     const link = document.createElement("a");
     link.href = video?.videoUrl;
     link.download = `${video?.title}.mp4`;
@@ -224,7 +217,6 @@ const PlayVideo = () => {
         { withCredentials: true }
       );
       await getSubscribedContentData();
-      
     } catch (error) {
       console.log(error);
     } finally {
@@ -452,15 +444,19 @@ const PlayVideo = () => {
                 {channel?.subscribers?.length} subscribers
               </p>
             </div>
-            <button
-              onClick={handleSubscribe}
-              disabled={loading}
-              className={`px-4 py-2 rounded-full ml-auto text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
-                isSubscribed ? "bg-gray-800 text-white" : "bg-white text-black"
-              }`}
-            >
-              {isSubscribed ? "Subscribed" : "Subscribe"}
-            </button>
+            {loggedInUserData?.channel !== channel?._id && (
+              <button
+                onClick={handleSubscribe}
+                disabled={loading}
+                className={`px-4 py-2 rounded-full ml-auto text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
+                  isSubscribed
+                    ? "bg-gray-800 text-white"
+                    : "bg-white text-black"
+                }`}
+              >
+                {isSubscribed ? "Subscribed" : "Subscribe"}
+              </button>
+            )}
           </div>
 
           {/* Video Info Section */}

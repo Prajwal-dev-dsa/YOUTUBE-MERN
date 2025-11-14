@@ -83,7 +83,7 @@ const CreatePost = () => {
         <button
           disabled={!content || loading}
           onClick={handleSubmit}
-          className="bg-red-600 cursor-pointer hover:bg-red-700 transition-all duration-300 text-white px-6 py-2 rounded-full"
+          className={`bg-red-600 hover:bg-red-700 transition-all duration-300 text-white px-6 py-2 rounded-full ${loading || !content ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
           {loading ? <ClipLoader color="#fff" size={20} /> : "Post"}
         </button>

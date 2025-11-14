@@ -9,6 +9,7 @@ import {
   FaThumbsDown,
   FaComment,
   FaThumbsUp,
+  FaArrowDown,
 } from "react-icons/fa";
 import { useUserStore } from "../../store/useUserStore";
 import VideoDescription from "../../components/VideoDescription";
@@ -42,20 +43,20 @@ const PlayShort = () => {
   const { shortId } = useParams();
   const { loggedInUserData } = useUserStore();
   const { shorts } = useContentStore();
-  const { subscribedChannels, getSubscribedContentData } = useSubscribedContentStore();
-  
+  const { subscribedChannels, getSubscribedContentData } =
+    useSubscribedContentStore();
   const [shortList, setShortList] = useState([]);
   const [pauseOrPlayIcon, setPauseOrPlayIcon] = useState(null);
   const [toggleCommentButton, setToggleCommentButton] = useState(false);
-  const [loading, setLoading] = useState(false);
   const shortRefs = useRef([]);
   const [watchedShorts, setWatchedShorts] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [currentShort, setCurrentShort] = useState(null);
 
   useEffect(() => {
     if (!shorts) return;
     getSubscribedContentData();
-    
+
     const shortToBePlayedFirst = shorts.find((short) => short?._id === shortId);
     const shuffleShorts = [...shorts].sort(() => Math.random() - 0.5);
     if (shortToBePlayedFirst) {
@@ -79,10 +80,14 @@ const PlayShort = () => {
             if (entry.isIntersecting) {
               video.muted = false;
               video.currentTime = 0;
-              video.play().catch(e => console.log("Autoplay blocked", e));
+              video.play().catch((e) => console.log("Autoplay blocked", e));
               setPauseOrPlayIcon(null);
               const currentPlayingShortId = shortList[index]?._id;
-              if (currentPlayingShortId && !watchedShorts.includes(currentPlayingShortId)) {
+              setCurrentShort(currentPlayingShortId);
+              if (
+                currentPlayingShortId &&
+                !watchedShorts.includes(currentPlayingShortId)
+              ) {
                 addNewView(currentPlayingShortId);
                 setWatchedShorts((prev) => [...prev, currentPlayingShortId]);
               }
@@ -149,25 +154,27 @@ const PlayShort = () => {
   };
 
   const isSubscribedTo = (channelId) => {
-      if (!loggedInUserData || !subscribedChannels) return false;
-      return subscribedChannels.some(c => c._id === channelId);
+    if (!loggedInUserData || !subscribedChannels) return false;
+    return subscribedChannels.some((c) => c._id === channelId);
   };
 
   const toggleLikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
     setShortList((prevList) =>
-        prevList.map((short) => {
-            if (short._id === shortId) {
-                const userId = loggedInUserData._id;
-                const isLiked = short.likes.includes(userId);
-                return {
-                    ...short,
-                    likes: isLiked ? short.likes.filter(id => id !== userId) : [...short.likes, userId],
-                    dislikes: short.dislikes.filter(id => id !== userId)
-                };
-            }
-            return short;
-        })
+      prevList.map((short) => {
+        if (short._id === shortId) {
+          const userId = loggedInUserData._id;
+          const isLiked = short.likes.includes(userId);
+          return {
+            ...short,
+            likes: isLiked
+              ? short.likes.filter((id) => id !== userId)
+              : [...short.likes, userId],
+            dislikes: short.dislikes.filter((id) => id !== userId),
+          };
+        }
+        return short;
+      })
     );
     try {
       await axios.put(
@@ -183,18 +190,20 @@ const PlayShort = () => {
   const toggleDislikes = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
     setShortList((prevList) =>
-        prevList.map((short) => {
-            if (short._id === shortId) {
-                const userId = loggedInUserData._id;
-                const isDisliked = short.dislikes.includes(userId);
-                return {
-                    ...short,
-                    dislikes: isDisliked ? short.dislikes.filter(id => id !== userId) : [...short.dislikes, userId],
-                    likes: short.likes.filter(id => id !== userId)
-                };
-            }
-            return short;
-        })
+      prevList.map((short) => {
+        if (short._id === shortId) {
+          const userId = loggedInUserData._id;
+          const isDisliked = short.dislikes.includes(userId);
+          return {
+            ...short,
+            dislikes: isDisliked
+              ? short.dislikes.filter((id) => id !== userId)
+              : [...short.dislikes, userId],
+            likes: short.likes.filter((id) => id !== userId),
+          };
+        }
+        return short;
+      })
     );
     try {
       await axios.put(
@@ -210,17 +219,19 @@ const PlayShort = () => {
   const toggleSavedBy = async (shortId) => {
     if (!shortId || !loggedInUserData) return;
     setShortList((prevList) =>
-        prevList.map((short) => {
-            if (short._id === shortId) {
-                const userId = loggedInUserData._id;
-                const isSaved = short.savedBy.includes(userId);
-                return {
-                    ...short,
-                    savedBy: isSaved ? short.savedBy.filter(id => id !== userId) : [...short.savedBy, userId]
-                };
-            }
-            return short;
-        })
+      prevList.map((short) => {
+        if (short._id === shortId) {
+          const userId = loggedInUserData._id;
+          const isSaved = short.savedBy.includes(userId);
+          return {
+            ...short,
+            savedBy: isSaved
+              ? short.savedBy.filter((id) => id !== userId)
+              : [...short.savedBy, userId],
+          };
+        }
+        return short;
+      })
     );
     try {
       await axios.put(
@@ -286,6 +297,17 @@ const PlayShort = () => {
     }
   };
 
+  const handleDownload = () => {
+    const short = shortList.find((s) => s?._id === currentShort);
+    if (!short) return;
+    const link = document.createElement("a");
+    link.href = short?.shortUrl;
+    link.download = `${short?.title}.mp4`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="h-screen w-full overflow-y-auto snap-y snap-mandatory scrollbar-hide bg-[#0f0f0f] min-h-screen relative text-white">
       {shortList.map((short, index) => (
@@ -330,18 +352,20 @@ const PlayShort = () => {
                 >
                   {short?.channel?.name}
                 </p>
-                <button
-                  onClick={() => handleSubscribe(short?.channel?._id)}
-                  className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
-                    isSubscribedTo(short?.channel?._id)
-                      ? "bg-gray-800 text-white"
-                      : "bg-white text-black"
-                  }`}
-                >
-                  {isSubscribedTo(short?.channel?._id)
-                    ? "Subscribed"
-                    : "Subscribe"}
-                </button>
+                {loggedInUserData?.channel !== short?.channel?._id && (
+                  <button
+                    onClick={() => handleSubscribe(short?.channel?._id)}
+                    className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition duration-300 cursor-pointer ${
+                      isSubscribedTo(short?.channel?._id)
+                        ? "bg-gray-800 text-white"
+                        : "bg-white text-black"
+                    }`}
+                  >
+                    {isSubscribedTo(short?.channel?._id)
+                      ? "Subscribed"
+                      : "Subscribe"}
+                  </button>
+                )}
               </div>
               <h2 className="font-semibold text-sm pl-1">{short?.title}</h2>
               <VideoDescription text={short?.description} />
@@ -368,7 +392,11 @@ const PlayShort = () => {
                   setToggleCommentButton(!toggleCommentButton);
                 }}
               />
-              <IconButtons icon={FaDownload} label="Download" />
+              <IconButtons
+                onClick={handleDownload}
+                icon={FaDownload}
+                label="Download"
+              />
               <IconButtons
                 icon={FaBookmark}
                 active={short?.savedBy?.includes(loggedInUserData?._id)}
